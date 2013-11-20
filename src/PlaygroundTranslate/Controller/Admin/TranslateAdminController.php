@@ -16,15 +16,15 @@ class TranslateAdminController extends AbstractActionController
 {
     public function indexAction()
     {
-       //$options = $this->getCitroenOption();
-        //var_dump($options->getCountries());
+        $options = $this->getTranslateOptions();
+        var_dump($options->getLocales());
 
         return new ViewModel();
     }
 
 
-    public function getCitroenOption()
+    public function getTranslateOptions()
     {
-        //return $this->getServiceLocator()->get('citroen_module_options');
+        return $this->getServiceLocator()->get('playgroundTranslate_module_options');
     }
 }

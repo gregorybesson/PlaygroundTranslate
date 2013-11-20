@@ -39,15 +39,13 @@ return array(
             'admin' => array(
                 'child_routes' => array(
                     'playgroundtranslate' => array(
-                            'translate' => array(
-                                'type' => 'Segment',
-                                'options' => array(
-                                    'route' => '/translate',
-                                    'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\TranslateAdmin',
-                                        'action'     => 'index',
-                                    ),
-                                ),
+                        'type' => 'Literal',
+                        'priority' => 1000,
+                        'options' => array(
+                            'route' => '/translate',
+                            'defaults' => array(
+                                'controller' => 'PlaygroundTranslate\Controller\Admin\TranslateAdmin',
+                                'action' => 'index',
                             ),
                         ),
                     ),
@@ -70,18 +68,22 @@ return array(
         'admin' => array(
             'translate'  => array(
                 'label' => 'Translate',
-                'route' => 'admin/playgroundtranslate/translate',
-                'resource' => 'playgroundtranslate',
+                'route' => 'admin/playgroundtranslate',
+                'resource' => 'translate',
                 'privilege' => 'list',
                 'pages' => array(
                     'list-pages' => array(
                         'label' => 'Translate',
-                        'route' => 'admin/playgroundtranslate/translate',
-                        'resource' => 'playgroundtranslate',
+                        'route' => 'admin/playgroundtranslate',
+                        'resource' => 'translate',
                         'privilege' => 'list',
                     ),
                 ),    
             ),
         ),
+    ),
+    'locales' => array(
+        'fr_FR' => 'Français',
+        'en_US' => 'Anglais'
     )
 );
