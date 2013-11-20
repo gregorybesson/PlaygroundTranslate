@@ -1,6 +1,6 @@
 <?php
 
-namespace PlaygroundTranslate
+namespace PlaygroundTranslate;
 
 use Zend\Mvc\MvcEvent;
 use Zend\Validator\AbstractValidator;
@@ -27,6 +27,10 @@ class Module
             $translate->getTranslator()->setLocale($locale);
         }
         AbstractValidator::setDefaultTranslator($translator,'playgroundtranslate');
+
+        $options = $serviceManager->get('playgroundtranslate_module_options');
+        $config = $serviceManager->get('Config');
+        $options->setLocales($config['locales']);
         
     }
 
@@ -50,8 +54,14 @@ class Module
     {
         return array(
             'aliases' => array(
-                    'playgroundflow_doctrine_em' => 'doctrine.entitymanager.orm_default',
-            )
+                'playgroundtranslate_doctrine_em' => 'doctrine.entitymanager.orm_default',
+            ),
+             'factories' => array(
+                'playgroundtranslate_module_options' => function  ($sm) {
+                    $config = $sm->get('Configuration');
+                    return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
+                }
+            ),
         );
     }
 }
