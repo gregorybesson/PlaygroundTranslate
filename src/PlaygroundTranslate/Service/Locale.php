@@ -32,64 +32,6 @@ class Locale extends EventProvider implements ServiceManagerAwareInterface
     protected $options;
 
     /**
-     *
-     * This service is ready for create a locale
-     *
-     * @param  array  $data
-     * @param  string $formClass
-     *
-     * @return \PlaygroundTranslate\Entity\Locale
-     */
-    public function create(array $data)
-    {
-        $locale = new LocaleEntity();
-        $locale->populate($data);
-        $entityManager = $this->getServiceManager()->get('playgroundtranslate_doctrine_em');
-
-        $form = $this->getServiceManager()->get('playgroundtranslate_locale_form');
-
-        $form->bind($locale);
-        $form->setData($data);
-
-        if (!$form->isValid()) {
-            return false;
-        }
-
-        $localeMapper = $this->getLocaleMapper();
-        $locale = $localeMapper->insert($locale);
-
-        return $locale;
-    }
-
-    /**
-     *
-     * This service is ready for edit a locale
-     *
-     * @param  array  $data
-     * @param  string $locale
-     * @param  string $formClass
-     *
-     * @return \PlaygroundTranslate\Entity\Locale
-     */
-    public function edit(array $data, $locale)
-    {
-        $entityManager = $this->getServiceManager()->get('playgroundtranslate_doctrine_em');
-
-        $form  = $this->getServiceManager()->get('playgroundtranslate_locale_form');
-
-        $form->bind($locale);
-
-        $form->setData($data);
-
-        if (!$form->isValid()) {
-            return false;
-        }
-        $locale = $this->getLocaleMapper()->update($locale);
-
-        return $locale;
-    }
-
-    /**
      * getLocaleMapper
      *
      * @return LocaleMapper

@@ -39,7 +39,7 @@ class Locale
 
     /**
     * findById : recupere l'entite en fonction de son id
-    * @param int $id id de la company
+    * @param int $id id de la locale
     *
     * @return PlaygroundTranslate\Entity\Locale $locale
     */
@@ -82,7 +82,7 @@ class Locale
     }
 
     /**
-    * insert : met a jour en base une entité company et persiste en base
+    * insert : met a jour en base une entité locale et persiste en base
     * @param PlaygroundTranslate\Entity\Locale $entity locale
     *
     * @return PlaygroundTranslate\Entity\Locale $locale
