@@ -1,1 +1,30 @@
-Helloworld
+<?php $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate');// Pour le texte ?>
+<?php 
+        $form = $this->form;
+        $form->prepare();
+        $form->get('submit')->setLabel($this->translate('validate'));
+?>
+<div class="row">
+    <div class="span8">
+        <fieldset>
+            <legend><?php echo $this->translate('upload translate'); ?></legend>
+            <?php echo $this->form()->openTag($form);  ?>
+            
+            <?php echo $this->formLabel($form->get('uploadTranslate')); ?>
+            <?php echo $this->formFile($form->get('uploadTranslate')); ?>
+
+            <?php echo $this->formLabel($form->get('locale')); ?>
+            <?php echo $this->formSelect($form->get('locale')); ?>
+
+            <?php echo $this->formButton($form->get('submit')); ?>
+            <?php echo $this->form()->closeTag(); ?>
+        </fieldset>
+
+        <fieldset>
+            <legend><?php echo $this->translate('update translate'); ?></legend>
+        </fieldset>
+    </div>
+    <div class="span4">
+        <?php echo $this->translate('history'); ?>
+    </div>
+</div>

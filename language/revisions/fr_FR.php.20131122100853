@@ -13,6 +13,6 @@ return array(
     'validate' => 'Valider',
     'locale' => 'langue',
     'update translate' => 'Mise a jour des traductions',
-    'history' => 'Historique',
+    'history' => 'Historiques',
 
 );

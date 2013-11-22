@@ -61,12 +61,20 @@ class Module
                     $config = $sm->get('Configuration');
                     return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
                 },
+                'playgroundtranslate_translate_form' => function  ($sm) {
+                    $translator = $sm->get('translator');
+                    $form = new Form\Admin\Translate(null, $sm, $translator);
+                    
+                    return $form;
+                },
                 'playgroundtranslate_locale_mapper' => function  ($sm) {
                     return new Mapper\Locale($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
                 },
             ),
             'invokables' => array(
                 'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
+                'playgroundtranslate_translate' => 'PlaygroundTranslate\Service\Translate',
+
             ),
         );
     }

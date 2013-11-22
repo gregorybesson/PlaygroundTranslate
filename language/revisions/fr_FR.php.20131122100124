@@ -9,10 +9,10 @@
 
 return array(
     'import translate' => 'Importer une nouvelle version des traductions',
-    'upload translate' => 'Importer des traductions',
+    'upload translate' => 'Uploader des traductions',
     'validate' => 'Valider',
     'locale' => 'langue',
-    'update translate' => 'Mise a jour des traductions',
+    'update translate' => 'Mise à jour des traductions',
     'history' => 'Historique',
 
 );
