@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * Adfab Connect
+ *
+ * translate file auto generated
+ *
+ */
+
+return array(
+    'import_translate' => 'Importer une nouvelle version des traductions',
+    'upload translate' => 'Uploader des traductions',
+
+);

@@ -60,7 +60,16 @@ class Module
                 'playgroundtranslate_module_options' => function  ($sm) {
                     $config = $sm->get('Configuration');
                     return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
-                }
+                },
+                'playgroundtranslate_translate_form' => function  ($sm) {
+                    $translator = $sm->get('translator');
+                    $form = new Form\Admin\Translate(null, $sm, $translator);
+                    
+                    return $form;
+                },
+            ),
+             'invokables' => array(
+                'playgroundtranslate_translate' => 'PlaygroundTranslate\Service\Translate',
             ),
         );
     }
