@@ -27,10 +27,6 @@ class Module
             $translate->getTranslator()->setLocale($locale);
         }
         AbstractValidator::setDefaultTranslator($translator,'playgroundtranslate');
-
-        $options = $serviceManager->get('playgroundtranslate_module_options');
-        $config = $serviceManager->get('Config');
-        $options->setLocales($config['locales']);
         
     }
 
@@ -73,7 +69,7 @@ class Module
             ),
             'invokables' => array(
                 'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
-                'playgroundtranslate_translate' => 'PlaygroundTranslate\Service\Translate',
+                'playgroundtranslate_translate_service' => 'PlaygroundTranslate\Service\Translate',
 
             ),
         );

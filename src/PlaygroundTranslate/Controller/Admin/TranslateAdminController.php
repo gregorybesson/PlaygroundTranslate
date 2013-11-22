@@ -18,8 +18,29 @@ class TranslateAdminController extends AbstractActionController implements Servi
 {
     public function indexAction()
     {
+
         $sl = $this->getServiceLocator(); 
+
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        $locales = array();
+        if($user->getRole()->getRoleId()=="admin") {    
+            foreach ($user->getSiteCountries() as $siteCountry) {
+                foreach ($siteCountry->getLocales() as $localesByCountry) {
+                    $locales[] = $localesByCountry;
+                }
+            }
+        }
+        elseif ($user->getRole()->getRoleId()=="super_admin") {
+            $locales = $sl->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();
+        }
+
+        $localesForm = array();
+        foreach ($locales as $key => $locale) {
+            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
+        }
+
         $form = $sl->get('playgroundtranslate_translate_form');
+        $form->get('locale')->setValueOptions($localesForm);
 
         $request = $this->getRequest();
 
@@ -30,7 +51,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
                     $request->getFiles()->toArray()
             );  
 
-            $return  = $sl->get('playgroundtranslate_translate')->upload($data);
+            $return  = $sl->get('playgroundtranslate_translate_service')->upload($data);
             
             if(! $return){
                 $this->flashMessenger()->addMessage('The translate has not been updated');
@@ -43,7 +64,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
 
         $viewModel = new ViewModel();
 
-        return $viewModel->setVariables(array('form' => $form));
+        return $viewModel->setVariables(array('form' => $form, 'locales', $locales));
     }
 
 
