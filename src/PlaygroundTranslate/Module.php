@@ -56,7 +56,7 @@ class Module
             'aliases' => array(
                 'playgroundtranslate_doctrine_em' => 'doctrine.entitymanager.orm_default',
             ),
-             'factories' => array(
+            'factories' => array(
                 'playgroundtranslate_module_options' => function  ($sm) {
                     $config = $sm->get('Configuration');
                     return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
@@ -67,8 +67,12 @@ class Module
                     
                     return $form;
                 },
+                'playgroundtranslate_locale_mapper' => function  ($sm) {
+                    return new Mapper\Locale($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
+                },
             ),
-             'invokables' => array(
+            'invokables' => array(
+                'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
                 'playgroundtranslate_translate' => 'PlaygroundTranslate\Service\Translate',
             ),
         );
