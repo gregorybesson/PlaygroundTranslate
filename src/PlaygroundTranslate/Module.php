@@ -74,6 +74,7 @@ class Module
             'invokables' => array(
                 'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
                 'playgroundtranslate_translate' => 'PlaygroundTranslate\Service\Translate',
+
             ),
         );
     }
