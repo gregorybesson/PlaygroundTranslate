@@ -82,8 +82,4 @@ return array(
             ),
         ),
     ),
-    'locales' => array(
-        'fr_FR' => 'Français',
-        'en_US' => 'Anglais'
-    )
 );

@@ -61,7 +61,7 @@ class Translate extends ProvidesEventsForm
             'options' => array(
                 'label' => $translator->translate('locale', 'playgroundtranslate'),
                 'value_options' => $this->getLocales(),
-                )
+            )
         ));
 
 
@@ -74,6 +74,11 @@ class Translate extends ProvidesEventsForm
 
     public function getLocales()
     {   
-        return $this->serviceManager->get('playgroundtranslate_module_options')->getLocales();
+        $locales = $this->serviceManager->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();
+        $localesForm = array();
+        foreach ($locales as $key => $locale) {
+            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
+        }
+        return $localesForm;
     }
 }
