@@ -22,17 +22,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
         $sl = $this->getServiceLocator(); 
 
         $user = $this->zfcUserAuthentication()->getIdentity();
-        $locales = array();
-        if($user->getRole()->getRoleId()=="admin") {    
-            foreach ($user->getSiteCountries() as $siteCountry) {
-                foreach ($siteCountry->getLocales() as $localesByCountry) {
-                    $locales[] = $localesByCountry;
-                }
-            }
-        }
-        elseif ($user->getRole()->getRoleId()=="super_admin") {
-            $locales = $sl->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();
-        }
+        $locales = $sl->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();
 
         $localesForm = array();
         foreach ($locales as $key => $locale) {
@@ -64,7 +54,9 @@ class TranslateAdminController extends AbstractActionController implements Servi
 
         $viewModel = new ViewModel();
 
-        return $viewModel->setVariables(array('form' => $form, 'locales', $locales));
+        return $viewModel->setVariables(array('form' => $form, 
+                                              'locales' => $locales,
+                                              'user' => $user));
     }
 
 
