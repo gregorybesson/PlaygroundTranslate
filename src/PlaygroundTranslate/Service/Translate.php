@@ -13,14 +13,21 @@ use PlaygroundTranslate\Lib\Excel\ExcelReader;
 
 class Translate extends EventProvider implements ServiceManagerAwareInterface
 {
-
+    /*
+     * @var PATH_LANGUAGE : path qui definit les fichiers de traductions
+     */
     const PATH_LANGUAGE = '/../../../language/';
-   /*
+    /*
      * @var ServiceManager
      */
     protected $serviceManager;
 
-
+    /**
+    * upload : permet d'upload un CSV et de le retranscrire en un fichier de traduction sous ZF
+    * @param array $data file upload form
+    * 
+    * @return boolean $return status de la fonction
+    */
     public function upload(array $data)
     {
         $content = $this->readCSV($data);
@@ -37,7 +44,12 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
     }
 
-
+    /**
+    * readCSV : Lire un fichier CSV et le formater dans un tableau php
+    * @param array $data file upload form
+    * 
+    * @return array $content array de traductions
+    */
     public function readCSV($data) 
     {
         $content = array();
@@ -60,6 +72,13 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $content;
     }
 
+    /**
+    * writeFile : Ecrire un fichier temporaire php de traduction 
+    * @param string $locale locale
+    * @param array $content array de traductions
+    * 
+    * @return mixed $mixed retour du file_put_contents pour le fichier temporaire
+    */
     public function writeFile($locale, $content)
     {
        $translate = "";
@@ -73,6 +92,12 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return file_put_contents(__DIR__.self::PATH_LANGUAGE.$locale.'.php.tmp', $contentTranslate);
     }
 
+    /**
+    * activeTranslate : Renommage du fichier temporaire pour l'activer sous ZF
+    * @param string $locale locale
+    * 
+    * @return boolean $return retour du rename
+    */
     public function activeTranslate($locale)
     {
         $oldFile = __DIR__.self::PATH_LANGUAGE.$locale.'.php';
@@ -83,6 +108,26 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         rename(__DIR__.self::PATH_LANGUAGE.$locale.'.php.tmp', $oldFile);
         
         return true;
+    }
+
+    /**
+    * readLanguagesFiles : Permet de lire les fichiers de traductions
+    * 
+    * @return array $translates tableau de traductions
+    */
+    public function readLanguagesFiles()
+    {
+        $translates = array();
+
+        $dir = opendir(__DIR__.self::PATH_LANGUAGE);
+        while($file = readdir($dir)) { 
+            if($file != '.' && $file != '..' && !is_dir(__DIR__.self::PATH_LANGUAGE.$file)) {
+                $translates[basename(__DIR__.self::PATH_LANGUAGE.$file, '.php')] = @include __DIR__.self::PATH_LANGUAGE.$file;
+            }
+        }
+
+
+        return $translates;
     }
 
 

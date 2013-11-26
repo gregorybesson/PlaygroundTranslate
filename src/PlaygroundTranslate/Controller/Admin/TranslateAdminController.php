@@ -16,34 +16,49 @@ use Zend\View\Model\ViewModel;
 
 class TranslateAdminController extends AbstractActionController implements ServiceLocatorAwareInterface
 {
+    /**
+    * @var ServiceLocator $serviceLocator
+    */
+    protected $serviceLocator;
+     /**
+    * @var Form/Translate $translateForm
+    */
+    protected $translateForm;
+     /**
+    * @var Service/Translate $translateService
+    */
+    protected $translateService;
+     /**
+    * @var Service/Locale $localeService
+    */
+    protected $localeService;
+
+
+    /**
+    * indexAction : Permet de recuperer les traductions et de les mettre a jour
+    * Upload de fichier CSV
+    *
+    * @return array $array Passage des variables dans le template
+    * form : Formulaire
+    * locales : Locales
+    * user : user
+    * translates : traductions
+    * keys : clé des traductions
+    */
     public function indexAction()
     {
-
-        $sl = $this->getServiceLocator(); 
-
         $user = $this->zfcUserAuthentication()->getIdentity();
-        $locales = array();
-        if($user->getRole()->getRoleId()=="admin") {    
-            foreach ($user->getSiteCountries() as $siteCountry) {
-                foreach ($siteCountry->getLocales() as $localesByCountry) {
-                    $locales[] = $localesByCountry;
-                }
-            }
-        }
-        elseif ($user->getRole()->getRoleId()=="super_admin") {
-            $locales = $sl->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();
-        }
+        $locales = $this->getLocaleService()->getLocaleMapper()->findAll();
 
         $localesForm = array();
         foreach ($locales as $key => $locale) {
             $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
         }
 
-        $form = $sl->get('playgroundtranslate_translate_form');
+        $form = $this->getTranslateForm();
         $form->get('locale')->setValueOptions($localesForm);
 
         $request = $this->getRequest();
-
      
         if ($request->isPost()) {
             $data = array_merge(
@@ -51,7 +66,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
                     $request->getFiles()->toArray()
             );  
 
-            $return  = $sl->get('playgroundtranslate_translate_service')->upload($data);
+            $return  = $this->getTranslateService()->upload($data);
             
             if(! $return){
                 $this->flashMessenger()->addMessage('The translate has not been updated');
@@ -64,22 +79,114 @@ class TranslateAdminController extends AbstractActionController implements Servi
 
         $viewModel = new ViewModel();
 
-        return $viewModel->setVariables(array('form' => $form, 'locales', $locales));
+        $translates = $this->getTranslateService()->readLanguagesFiles();
+        $keys = array();
+        foreach ($translates as $locale => $translate) {
+            foreach (array_keys($translate) as $value) {
+                if(empty($keys[$value])) {
+                    $keys[$value] = $value;
+                }
+            }
+        }
+        
+        return $viewModel->setVariables(array('form' => $form, 
+                                              'locales' => $locales,
+                                              'user' => $user,
+                                              'translates' => $translates,
+                                              'keys' => $keys));
     }
 
-
-    public function getTranslateOptions()
+    /**
+    * updateAction : Mise a jour à la volee des traduction
+    *
+    * @return redirect to admin/translate
+    */
+    public function updateAction()
     {
-        return $this->getServiceLocator()->get('playgroundtranslate_module_options');
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+             $data = array_merge(
+                    $request->getPost()->toArray(),
+                    $request->getFiles()->toArray()
+            ); 
+            foreach ($data['translate'] as $locale => $values) {
+                var_dump($values);
+                $return  = $this->getTranslateService()->writeFile($locale, $values);
+
+                if($return === false){
+                    $this->flashMessenger()->addMessage('The translate has not been updated');
+
+                    return $this->redirect()->toRoute('admin/playgroundtranslate');
+                }
+
+                $return = $this->getTranslateService()->activeTranslate($locale);
+
+                if($return === false){
+                    $this->flashMessenger()->addMessage('The translate has not been updated');
+
+                    return $this->redirect()->toRoute('admin/playgroundtranslate');
+                }
+                $this->flashMessenger()->addMessage('The translate has been updated');
+            }
+            sleep(2);
+
+            return $this->redirect()->toRoute('admin/playgroundtranslate');
+        }
+
+        return $this->redirect()->toRoute('admin/playgroundtranslate');
     }
 
-    protected $serviceLocator;
+    /**
+    * getLocaleService : Recuperer le service des locales
+    *
+    * @return Service/Locale $localeService
+    */
+    public function getLocaleService()
+    {
+        if($this->localeService === null){
+            $this->localeService = $this->getServiceLocator()->get('playgroundtranslate_locale_service');
+        }
+        return $this->localeService;
+    }
 
-    public function getServiceLocator ()
+    /**
+    * getTranslateService : Recuperer le service des traductions
+    *
+    * @return Service/Translate $translateService
+    */
+    public function getTranslateService()
+    {
+        if($this->translateService === null){
+            $this->translateService = $this->getServiceLocator()->get('playgroundtranslate_translate_service');
+        }
+        return $this->translateService;
+    }
+
+    /**
+    * getTranslateForm : Recuperer le service des traductions
+    *
+    * @return Form/Translate $translateForm
+    */
+    public function getTranslateForm()
+    {
+        if($this->translateForm === null){
+            $this->translateForm = $this->getServiceLocator()->get('playgroundtranslate_translate_form');
+        }
+        return $this->translateForm;
+    }
+
+    /**
+    * getServiceLocator : Recuperer le service locator
+    * @return ServiceLocator $serviceLocator
+    */
+    public function getServiceLocator()
     {
         return $this->serviceLocator;
     }
 
+    /**
+    * setServiceLocator : set le service locator
+    */
     public function setServiceLocator (ServiceLocatorInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;

@@ -48,6 +48,19 @@ return array(
                                 'action' => 'index',
                             ),
                         ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'update' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/update',
+                                    'defaults' => array(
+                                        'controller' => 'PlaygroundTranslate\Controller\Admin\TranslateAdmin',
+                                        'action'     => 'update',
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                 ),
             ),
