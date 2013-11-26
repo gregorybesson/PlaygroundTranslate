@@ -120,7 +120,7 @@ class Locale implements InputFilterAwareInterface
     }
 
     /**
-     * @return the unknown_type
+     * @return string created_at
      */
     public function getCreatedAt()
     {
@@ -128,7 +128,7 @@ class Locale implements InputFilterAwareInterface
     }
 
     /**
-     * @param unknown_type $created_at
+     * @param string $created_at
      */
     public function setCreatedAt($created_at)
     {
@@ -138,7 +138,7 @@ class Locale implements InputFilterAwareInterface
     }
 
     /**
-     * @return the unknown_type
+     * @return string updated_at
      */
     public function getUpdatedAt()
     {
@@ -146,7 +146,7 @@ class Locale implements InputFilterAwareInterface
     }
 
     /**
-     * @param unknown_type $updated_at
+     * @param string $updated_at
      */
     public function setUpdatedAt($updated_at)
     {

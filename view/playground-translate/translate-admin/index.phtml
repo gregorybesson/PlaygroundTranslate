@@ -1,9 +1,30 @@
-<?php $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate');// Pour le texte ?>
-<?php 
-        $form = $this->form;
-        $form->prepare();
-        $form->get('submit')->setLabel($this->translate('validate'));
+<?php
+    $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate');
+    $user = $this->user;
+    $locales = $this->locales;
+
+    $form = $this->form;
+    $form->prepare();
+
+    if($user->getRole()->getRoleId() == "c_admin") {
+        $locales = array();
+        foreach ($user->getSiteCountries() as $siteCountry) {
+            foreach ($siteCountry->getLocales() as $localesByCountry) {
+                $locales[] = $localesByCountry;
+            }
+        }
+    
+        $localesForm = array();
+        foreach ($locales as $key => $locale) {
+            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
+        }
+        $form->get('locale')->setValueOptions($localesForm);
+    }
+    $form->get('submit')->setLabel($this->translate('validate'));
+
+    
 ?>
+
 <div class="row">
     <div class="span8">
         <fieldset>
@@ -21,7 +42,32 @@
         </fieldset>
 
         <fieldset>
-            <legend><?php echo $this->translate('update translate'); ?></legend>
+            <form action="/admin/translate/update" method="post">
+                <legend><?php echo $this->translate('update translate'); ?></legend>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>clé </td>
+                            <?php foreach (array_keys($this->translates) as $locale) : ?>
+                                 <td><?php echo $locale; ?></td>
+                            <?php endforeach ; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <?php foreach($keys as $key) : ?>
+                    <tr>
+                        <td> <?php echo $key; ?></td>
+                        <?php foreach (array_keys($this->translates) as $locale) : ?>
+                            <td>
+                                <textarea name="translate[<?php echo $locale ?>][<?php echo $key ?>]"><?php echo !empty($this->translates[$locale][$key])?$this->translates[$locale][$key]:''; ?></textarea>  
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <?php endforeach ; ?>
+                 </table>
+                <input type="submit" />
+            </form>
         </fieldset>
     </div>
     <div class="span4">

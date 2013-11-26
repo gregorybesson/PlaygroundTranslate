@@ -72,6 +72,12 @@ class Translate extends ProvidesEventsForm
         $this->add($submitElement, array('priority' => -100));
     }
 
+    /**
+    * getLocales :permet de recuperer toutes les locales
+    *
+    * @return array $localesForm
+    *
+    */
     public function getLocales()
     {   
         $locales = $this->serviceManager->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();

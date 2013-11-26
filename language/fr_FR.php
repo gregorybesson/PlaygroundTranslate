@@ -8,10 +8,11 @@
  */
 
 return array(
-    'import translate' => 'Importer une nouvelle version des traductions',
+    'import_translate' => '',
     'upload translate' => 'Importer des traductions',
-    'validate' => 'Valider',
-    'locale' => 'langue',
+    'import translate' => 'Importer une nouvelle version des traductions',
+    'validate' => 'Valider :p',
+    'locale' => 'langue :D',
     'update translate' => 'Mise a jour des traductions',
     'history' => 'Historique',
 

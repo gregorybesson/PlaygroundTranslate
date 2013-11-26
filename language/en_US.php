@@ -10,5 +10,10 @@
 return array(
     'import_translate' => 'Import a new version of translations ',
     'upload translate' => 'Upload translate',
+    'import translate' => '',
+    'validate' => '',
+    'locale' => '',
+    'update translate' => '',
+    'history' => '',
 
 );
