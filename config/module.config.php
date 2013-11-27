@@ -64,6 +64,20 @@ return array(
                     ),
                 ),
             ),
+            'frontend' => array(
+                'child_routes' => array(
+                    'locale' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => 'switch/[:locale]/[:context]/[:referer]',
+                            'defaults' => array(
+                                'controller' => 'PlaygroundTranslate\Controller\Frontend\SwitchLocale',
+                                'action'     => 'switch',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         ),
     ),
     'service_manager' => array(
@@ -75,6 +89,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'PlaygroundTranslate\Controller\Admin\TranslateAdmin' => 'PlaygroundTranslate\Controller\Admin\TranslateAdminController',
+            'PlaygroundTranslate\Controller\Frontend\SwitchLocale' => 'PlaygroundTranslate\Controller\Frontend\SwitchLocaleController'
         ),
     ),
     'navigation' => array(

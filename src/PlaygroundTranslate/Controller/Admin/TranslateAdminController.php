@@ -48,7 +48,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     public function indexAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
-        $locales = $this->getLocaleService()->getLocaleMapper()->findAll();
+        $locales = $this->getLocaleService()->getLocaleMapper()->findBy(array('active_front' => 1));
 
         $localesForm = array();
         foreach ($locales as $key => $locale) {
