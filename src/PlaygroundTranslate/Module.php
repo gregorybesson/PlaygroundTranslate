@@ -19,24 +19,26 @@ class Module
        
         // Gestion de la locale
         if (PHP_SAPI !== 'cli') {
-            //translator
             $locale = null;
             $options = $serviceManager->get('playgroundcore_module_options');
-
-            if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_front')) {
-                $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_front');
+            // Gestion locale pour le back
+            if(strpos($serviceManager->get('router')->match($serviceManager->get('request'))->getMatchedRouteName(), 'admin') !==false){
+                if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_back')) {
+                    $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_back');
+                }
+            }else{
+                // Gestion locale pour le front
+                if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_front')) {
+                    $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_front');
+                }  
             }
-
-            if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_back')) {
-                $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_back');
-            }
-
 
             if (empty($locale)) {
                $locale = $options->getLocale();
             } else {
                 $options->setLocale($locale);
             }
+
             $translator->setLocale($locale);
         
             // plugins

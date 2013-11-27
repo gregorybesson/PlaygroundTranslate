@@ -16,21 +16,34 @@ use Zend\View\Model\ViewModel;
 
 class SwitchLocaleController extends AbstractActionController implements ServiceLocatorAwareInterface
 {
+    /**
+    * @var $localeService : Service des locales
+    */
     protected $localeService;
 
+    /**
+    * switchAction : permet de switcher de langue en fonction d'un context (back/front)
+    * locale : locale pour switch
+    * context : (back/front)
+    * referer : retour à la page
+    *
+    * @return Redirect $redirect redirect to referer
+    */
     public function switchAction()
     {
         $locale = $this->getEvent()->getRouteMatch()->getParam('locale');
         $context = $this->getEvent()->getRouteMatch()->getParam('context');
-        $request = $this->getRequest();
+        $referer = urldecode($this->getEvent()->getRouteMatch()->getParam('referer'));
 
         $filter = 'active_'.$context;
         $locales = $this->getLocaleService()->getLocaleMapper()->findBy(array($filter => 1, 'locale' => $locale));
-        
-        $referer = urldecode($this->getEvent()->getRouteMatch()->getParam('referer'));
+                
+        // Si pas de locale, on redirige sans rien faire
         if(count($locales) != 1){
-            $this->redirect()->toUrl($referer);
+            
+            return $this->redirect()->toUrl($referer);
         }
+
         $locale = $locales[0];
         $cookie = new \Zend\Http\Header\SetCookie('pg_locale_'.$context, $locale->getLocale(), time() + 60*60*24*365,'/');
         $this->getResponse()->getHeaders()->addHeader($cookie);

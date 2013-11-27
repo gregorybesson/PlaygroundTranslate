@@ -19,7 +19,7 @@ class SwitchLocaleWidget extends AbstractHelper
     {
         $locales = array();
         if(empty($options['context'])){
-            $locales['locales'] = $this->getLocaleService()->getLocaleMapper()->findBy(array('active_front' => 1));
+            $locales['locales'] = $this->getLocaleService()->getLocaleMapper()->findAll();
             $locales['context'] = null;
 
             return $locales;
