@@ -39,6 +39,17 @@ class Locale implements InputFilterAwareInterface
      */
     protected $locale;
 
+     /**
+     * active_back
+     * @ORM\Column(type="integer", length=1, nullable=false)
+     */
+    protected $active_back = 0;
+     /**
+     * active_front
+     * @ORM\Column(type="integer", length=1, nullable=false)
+     */
+    protected $active_front = 0;
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -50,18 +61,18 @@ class Locale implements InputFilterAwareInterface
     protected $updated_at;
 
     /**
-     * @param string $id
+     * @param int $id
      * @return Locale
      */
     public function setId($id)
     {
-        $this->id = (string) $id;
+        $this->id = (int) $id;
 
         return $this;
     }
 
     /**
-     * @return string $id
+     * @return int $id
      */
     public function getId()
     {
@@ -117,6 +128,45 @@ class Locale implements InputFilterAwareInterface
     	$this->locale = (string) $locale;
     
     	return $this;
+    }
+
+
+    /**
+     * @param int $id
+     * @return Locale
+     */
+    public function setActiveFront($activeFront)
+    {
+        $this->active_front = (int) $activeFront;
+
+        return $this;
+    }
+
+    /**
+     * @return int $id
+     */
+    public function getActiveFront()
+    {
+        return $this->active_front;
+    }
+
+    /**
+     * @param int $activeBack
+     * @return Locale
+     */
+    public function setActiveBack($activeBack)
+    {
+        $this->active_back = (int) $activeBack;
+
+        return $this;
+    }
+
+    /**
+     * @return int $active_back
+     */
+    public function getActiveBack()
+    {
+        return $this->active_back;
     }
 
     /**

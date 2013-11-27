@@ -8,12 +8,12 @@
  */
 
 return array(
-    'import_translate' => 'Import a new version of translations ',
+    'import_translate' => '',
     'upload translate' => 'Upload translate',
-    'import translate' => '',
-    'validate' => '',
-    'locale' => '',
-    'update translate' => '',
-    'history' => '',
+    'import translate' => 'Import a new version of translations ',
+    'validate' => 'validate',
+    'locale' => 'locale',
+    'update translate' => 'Update a translate',
+    'history' => 'History',
 
 );

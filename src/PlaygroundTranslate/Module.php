@@ -15,17 +15,37 @@ class Module
         $serviceManager  = $application->getServiceManager();
         $eventManager    = $application->getEventManager();
 
-        $options = $serviceManager->get('playgroundcore_module_options');
-        $locale = $options->getLocale();
         $translator = $serviceManager->get('translator');
-        if (!empty($locale)) {
+       
+        // Gestion de la locale
+        if (PHP_SAPI !== 'cli') {
             //translator
-            $translator->setLocale($locale);
+            $locale = null;
+            $options = $serviceManager->get('playgroundcore_module_options');
 
+            if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_front')) {
+                $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_front');
+            }
+
+            if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_back')) {
+                $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_back');
+            }
+
+
+            if (empty($locale)) {
+               $locale = $options->getLocale();
+            } else {
+                $options->setLocale($locale);
+            }
+            $translator->setLocale($locale);
+        
             // plugins
             $translate = $serviceManager->get('viewhelpermanager')->get('translate');
             $translate->getTranslator()->setLocale($locale);
+
+           
         }
+
         AbstractValidator::setDefaultTranslator($translator,'playgroundtranslate');
         
     }
@@ -71,6 +91,20 @@ class Module
                 'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
                 'playgroundtranslate_translate_service' => 'PlaygroundTranslate\Service\Translate',
 
+            ),
+        );
+    }
+
+    public function getViewHelperConfig()
+    {
+        return array(
+            'factories' => array(
+                'switchLocaleWidget' => function ($sm) {
+                    $viewHelper = new View\Helper\SwitchLocaleWidget();
+                    $viewHelper->setLocaleService($sm->getServiceLocator()->get('playgroundtranslate_locale_service'));
+                    
+                    return $viewHelper;
+                },
             ),
         );
     }
