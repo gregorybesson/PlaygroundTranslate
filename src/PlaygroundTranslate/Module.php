@@ -77,6 +77,7 @@ class Module
             'factories' => array(
                 'playgroundtranslate_module_options' => function  ($sm) {
                     $config = $sm->get('Configuration');
+                    
                     return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
                 },
                 'playgroundtranslate_translate_form' => function  ($sm) {

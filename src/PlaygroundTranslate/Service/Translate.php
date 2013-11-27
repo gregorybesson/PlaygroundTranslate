@@ -14,10 +14,6 @@ use PlaygroundTranslate\Lib\Excel\ExcelReader;
 class Translate extends EventProvider implements ServiceManagerAwareInterface
 {
     /*
-     * @var PATH_LANGUAGE : path qui definit les fichiers de traductions
-     */
-    const PATH_LANGUAGE = '/../../../language/';
-    /*
      * @var ServiceManager
      */
     protected $serviceManager;
@@ -81,15 +77,18 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     */
     public function writeFile($locale, $content)
     {
-       $translate = "";
-       foreach ($content as $key => $value) {
-           $translate .= "    '".$key."' => '".$value."',\n";
-       }
+        $translate = "";
+        foreach ($content as $key => $value) {
+            $translate .= "    '".$key."' => '".$value."',\n";
+        }
+
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
 
         $template = file_get_contents(__DIR__.'/../Templates/translate.php');
         $contentTranslate = str_replace("{{translate}}", $translate, $template);
 
-        return file_put_contents(__DIR__.self::PATH_LANGUAGE.$locale.'.php.tmp', $contentTranslate);
+        return file_put_contents(__DIR__.$pathTranslate.$locale.'.php.tmp', $contentTranslate);
     }
 
     /**
@@ -100,12 +99,15 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     */
     public function activeTranslate($locale)
     {
-        $oldFile = __DIR__.self::PATH_LANGUAGE.$locale.'.php';
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+
+        $oldFile = __DIR__.$pathTranslate.$locale.'.php';
         if(file_exists($oldFile)){
-            rename($oldFile, __DIR__.self::PATH_LANGUAGE.'/revisions/'.$locale.'.php.'.date("YmdHis"));
+            rename($oldFile, __DIR__.$pathTranslate.'/revisions/'.$locale.'.php.'.date("YmdHis"));
         }
 
-        rename(__DIR__.self::PATH_LANGUAGE.$locale.'.php.tmp', $oldFile);
+        rename(__DIR__.$pathTranslate.$locale.'.php.tmp', $oldFile);
         
         return true;
     }
@@ -119,10 +121,13 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     {
         $translates = array();
 
-        $dir = opendir(__DIR__.self::PATH_LANGUAGE);
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+
+        $dir = opendir(__DIR__.$pathTranslate);
         while($file = readdir($dir)) { 
-            if($file != '.' && $file != '..' && !is_dir(__DIR__.self::PATH_LANGUAGE.$file)) {
-                $translates[basename(__DIR__.self::PATH_LANGUAGE.$file, '.php')] = @include __DIR__.self::PATH_LANGUAGE.$file;
+            if($file != '.' && $file != '..' && !is_dir(__DIR__.$pathTranslate.$file)) {
+                $translates[basename(__DIR__.$pathTranslate.$file, '.php')] = @include __DIR__.$pathTranslate.$file;
             }
         }
 

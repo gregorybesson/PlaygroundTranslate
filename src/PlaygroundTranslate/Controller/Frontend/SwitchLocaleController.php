@@ -34,7 +34,12 @@ class SwitchLocaleController extends AbstractActionController implements Service
         $locale = $this->getEvent()->getRouteMatch()->getParam('locale');
         $context = $this->getEvent()->getRouteMatch()->getParam('context');
         $referer = urldecode($this->getEvent()->getRouteMatch()->getParam('referer'));
-
+        
+        if ($context == 'front'){
+            $referer = str_replace("%channel%", $this->getEvent()->getRouteMatch()->getParam('channel'), $referer);
+            $referer = str_replace("//", '/', $referer);
+        }
+        
         $filter = 'active_'.$context;
         $locales = $this->getLocaleService()->getLocaleMapper()->findBy(array($filter => 1, 'locale' => $locale));
                 
