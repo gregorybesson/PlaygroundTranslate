@@ -21,8 +21,9 @@ class Module
         if (PHP_SAPI !== 'cli') {
             $locale = null;
             $options = $serviceManager->get('playgroundcore_module_options');
+
             // Gestion locale pour le back
-            if(strpos($serviceManager->get('router')->match($serviceManager->get('request'))->getMatchedRouteName(), 'admin') !==false){
+            if($serviceManager->get('router')->match($serviceManager->get('request')) && strpos($serviceManager->get('router')->match($serviceManager->get('request'))->getMatchedRouteName(), 'admin') !==false){
                 if ($e->getRequest()->getCookie() && $e->getRequest()->getCookie()->offsetExists('pg_locale_back')) {
                     $locale = $e->getRequest()->getCookie()->offsetGet('pg_locale_back');
                 }
