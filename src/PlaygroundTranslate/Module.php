@@ -44,13 +44,10 @@ class Module
         
             // plugins
             $translate = $serviceManager->get('viewhelpermanager')->get('translate');
-            $translate->getTranslator()->setLocale($locale);
-
-           
+            $translate->getTranslator()->setLocale($locale);  
         }
-
-        AbstractValidator::setDefaultTranslator($translator,'playgroundtranslate');
         
+        AbstractValidator::setDefaultTranslator($translator,'playgroundtranslate');
     }
 
     public function getConfig()
