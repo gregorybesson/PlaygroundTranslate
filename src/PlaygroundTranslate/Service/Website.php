@@ -2,7 +2,7 @@
 
 namespace PlaygroundTranslate\Service;
 
-use PlaygroundTranslate\Entity\SiteCountry as SiteCountryEntity;
+use PlaygroundTranslate\Entity\Website as WebsiteEntity;
 
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
@@ -13,13 +13,13 @@ use Citroen\Options\ModuleOptions;
 use DoctrineModule\Validator\NoObjectExists as NoObjectExistsValidator;
 use Zend\Stdlib\ErrorHandler;
 
-class SiteCountry extends EventProvider implements ServiceManagerAwareInterface
+class Website extends EventProvider implements ServiceManagerAwareInterface
 {
 
     /**
-     * @var siteCountryMapper
+     * @var websiteMapper
      */
-    protected $siteCountryMapper;
+    protected $websiteMapper;
 
     /**
      * @var ServiceManager
@@ -33,85 +33,85 @@ class SiteCountry extends EventProvider implements ServiceManagerAwareInterface
 
     /**
      *
-     * This service is ready for create a SiteCountry
+     * This service is ready for create a Website
      *
      * @param  array  $data
      * @param  string $formClass
      *
-     * @return \PlaygroundTranslate\Entity\SiteCountry
+     * @return \PlaygroundTranslate\Entity\Website
      */
     public function create(array $data)
     {
-        $siteCountry = new SiteCountry();
-        $siteCountry->populate($data);
+        $website = new WebsiteEntity();
+        $website->populate($data);
         $entityManager = $this->getServiceManager()->get('playgroundtranslate_doctrine_em');
 
-        $form = $this->getServiceManager()->get('playgroundtranslate_sitecountry_form');
+        $form = $this->getServiceManager()->get('playgroundtranslate_website_form');
 
-        $form->bind($siteCountry);
+        $form->bind($website);
         $form->setData($data);
 
         if (!$form->isValid()) {
             return false;
         }
 
-        $siteCountryMapper = $this->getSiteCountryMapper();
-        $siteCountry = $siteCountryMapper->insert($siteCountry);
+        $websiteyMapper = $this->getWebsiteMapper();
+        $website = $websiteyMapper->insert($website);
 
-        return $siteCountry;
+        return $website;
     }
 
     /**
      *
-     * This service is ready for edit a SiteCountry
+     * This service is ready for edit a Website
      *
      * @param  array  $data
-     * @param  string $siteCountry
+     * @param  string $website
      * @param  string $formClass
      *
-     * @return \Citroen\Entity\SiteCountry
+     * @return \Citroen\Entity\Website
      */
-    public function edit(array $data, $siteCountry)
+    public function edit(array $data, $website)
     {
         $entityManager = $this->getServiceManager()->get('playgroundtranslate_doctrine_em');
 
-        $form  = $this->getServiceManager()->get('playgroundtranslate_sitecountry_form');
+        $form  = $this->getServiceManager()->get('playgroundtranslate_website_form');
 
-        $form->bind($siteCountry);
+        $form->bind($website);
 
         $form->setData($data);
 
         if (!$form->isValid()) {
             return false;
         }
-        $siteCountry = $this->getCompanyMapper()->update($siteCountry);
+        $website = $this->getWebsiteMapper()->update($website);
 
-        return $siteCountry;
+        return $website;
     }
 
     /**
-     * getSiteCountryMapper
+     * getWebsiteMapper
      *
-     * @return SiteCountryMapper
+     * @return websiteMapper
      */
-    public function getSiteCountryMapper()
+    public function getWebsiteMapper()
     {
-        if (null === $this->siteCountryMapper) {
-            $this->siteCountryMapper = $this->getServiceManager()->get('playgroundtranslate_sitecountry_mapper');
+        if (null === $this->websiteMapper) {
+            $this->websiteMapper = $this->getServiceManager()->get('playgroundtranslate_website_mapper');
         }
 
-        return $this->siteCountryMapper;
+        return $this->websiteMapper;
     }
 
     /**
-     * setSiteCountryMapper
-     * @param  SiteCountryMapper $siteCountryMapper
+     * setWebsiteMapper
+     * @param  Mapper/Website $websiteMapper
      *
-     * @return Citroen\Entity\SiteCountryMapper SiteCountryMapper
+     * @return Citroen\Entity\WebsiteMapper websiteMapper
      */
-    public function setSiteCountryMapper($siteCountryMapper)
+    public function setWebsiteMapper($websiteMapper)
     {
-        $this->siteCountryMapper = $siteCountryMapper;
+        $this->websiteMapper = $websiteMapper;
 
         return $siteCountryMapper;
     }
@@ -120,7 +120,7 @@ class SiteCountry extends EventProvider implements ServiceManagerAwareInterface
      * setOptions
      * @param  ModuleOptions $options
      *
-     * @return Citroen\Service\SiteCountry $this
+     * @return PlaygroundTranslate\Service\Website $this
      */
     public function setOptions(ModuleOptions $options)
     {

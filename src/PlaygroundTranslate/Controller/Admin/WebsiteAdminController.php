@@ -12,10 +12,10 @@ namespace PlaygroundTranslate\Controller\Admin;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class SiteCountryAdminController extends AbstractActionController
+class WebsiteAdminController extends AbstractActionController
 {
 
-	protected $siteCountryService;
+	protected $websiteService;
 
 	protected $localeService;
 
@@ -29,35 +29,35 @@ class SiteCountryAdminController extends AbstractActionController
         $locales = $this->getLocaleService()->getLocaleMapper()->findBy(array('active_front' => 1));
         $user = $this->zfcUserAuthentication()->getIdentity();
         if($user->getRole()->getRoleId()=="c_admin") {
-            $siteCountries = $user->getSiteCountries();
+            $websites = $user->getWebsites();
         } elseif($user->getRole()->getRoleId()=="c_super_admin") {
-            $siteCountries = $this->getSiteCountryService()->getSiteCountryMapper()->findAll();
+            $websites = $this->getWebsiteService()->getWebsiteMapper()->findAll();
         }
-        return new ViewModel(compact("siteCountries", "locales"));
+        return new ViewModel(compact("websites", "locales"));
 	}
 
 	public function editActiveAction()
 	{
-		$siteCountryId = $this->getEvent()->getRouteMatch()->getParam('siteCountryId');
-		$siteCountry = $this->getSiteCountryService()->getSiteCountryMapper()->findBy(array('id' => $siteCountryId));
-		$siteCountry = $siteCountry[0];
-		$siteCountry->setActive(!$siteCountry->getActive());
-		$this->getSiteCountryService()->getSiteCountryMapper()->update($siteCountry);
+		$websiteId = $this->getEvent()->getRouteMatch()->getParam('websiteId');
+		$website = $this->getWebsiteService()->getWebsiteMapper()->findBy(array('id' => $websiteId));
+		$website = $website[0];
+		$website->setActive(!$website->getActive());
+		$this->getWebsiteService()->getWebsiteMapper()->update($website);
 		$this->redirect()->toRoute('admin');
 	}
 
-	public function getSiteCountryService()
+	public function getWebsiteService()
     {
-        if (null === $this->siteCountryService) {
-            $this->siteCountryService = $this->getServiceLocator()->get('playgroundtranslate_sitecountry_service');
+        if (null === $this->websiteService) {
+            $this->websiteService = $this->getServiceLocator()->get('playgroundtranslate_website_service');
         }
 
-        return $this->siteCountryService;
+        return $this->websiteService;
     }
 
-    public function setSiteCountryService($siteCountryService)
+    public function setWebsiteService($websiteService)
     {
-        $this->siteCountryService = $siteCountryService;
+        $this->websiteService = $websiteService;
 
         return $this;
     }

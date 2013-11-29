@@ -5,9 +5,9 @@ namespace PlaygroundTranslate\Mapper;
 use Doctrine\ORM\EntityManager;
 use ZfcBase\Mapper\AbstractDbMapper;
 
-use Citroen\Options\ModuleOptions;
+use PlaygroundTranslate\Options\ModuleOptions;
 
-class SiteCountry
+class Website
 {
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -41,7 +41,7 @@ class SiteCountry
     * findById : recupere l'entite en fonction de son id
     * @param int $id id de la company
     *
-    * @return PlaygroundTranslate\Entity\Contact $contact
+    * @return PlaygroundTranslate\Entity\Website $website
     */
     public function findById($id)
     {
@@ -52,7 +52,7 @@ class SiteCountry
     * findBy : recupere des entites en fonction de filtre
     * @param array $array tableau de filtre
     *
-    * @return collection $contacts collection de PlaygroundTranslate\Entity\Contact
+    * @return collection $websites collection de PlaygroundTranslate\Entity\Website
     */
     public function findBy($array)
     {
@@ -60,10 +60,10 @@ class SiteCountry
     }
 
     /**
-    * insert : insert en base une entité contact
-    * @param PlaygroundTranslate\Entity\Contact $contact contact
+    * insert : insert en base une entité website
+    * @param PlaygroundTranslate\Entity\Website $website website
     *
-    * @return PlaygroundTranslate\Entity\Contact $contact
+    * @return PlaygroundTranslate\Entity\Website $website
     */
     public function insert($entity)
     {
@@ -71,10 +71,10 @@ class SiteCountry
     }
 
     /**
-    * insert : met a jour en base une entité contact
-    * @param PlaygroundTranslate\Entity\Contact $contact contact
+    * insert : met a jour en base une entité website
+    * @param PlaygroundTranslate\Entity\Website $website website
     *
-    * @return PlaygroundTranslate\Entity\Contact $contact
+    * @return PlaygroundTranslate\Entity\Website $website
     */
     public function update($entity)
     {
@@ -83,9 +83,9 @@ class SiteCountry
 
     /**
     * insert : met a jour en base une entité company et persiste en base
-    * @param PlaygroundTranslate\Entity\Contact $entity contact
+    * @param PlaygroundTranslate\Entity\Website $entity website
     *
-    * @return PlaygroundTranslate\Entity\Contact $contact
+    * @return PlaygroundTranslate\Entity\Website $website
     */
     protected function persist($entity)
     {
@@ -98,7 +98,7 @@ class SiteCountry
     /**
     * findAll : recupere toutes les entites
     *
-    * @return collection $contact collection de PlaygroundTranslate\Entity\Contact
+    * @return collection $websites collection de PlaygroundTranslate\Entity\Website
     */
     public function findAll()
     {
@@ -106,8 +106,8 @@ class SiteCountry
     }
 
      /**
-    * remove : supprimer une entite contact
-    * @param PlaygroundTranslate\Entity\Contact $contact Contact
+    * remove : supprimer une entite website
+    * @param PlaygroundTranslate\Entity\Website $website website
     *
     */
     public function remove($entity)
@@ -117,14 +117,14 @@ class SiteCountry
     }
 
     /**
-    * getEntityRepository : recupere l'entite contact
+    * getEntityRepository : recupere l'entite website
     *
-    * @return PlaygroundTranslate\Entity\Contact $contact
+    * @return PlaygroundTranslate\Entity\Website $website
     */
     public function getEntityRepository()
     {
         if (null === $this->er) {
-            $this->er = $this->em->getRepository('PlaygroundTranslate\Entity\SiteCountry');
+            $this->er = $this->em->getRepository('PlaygroundTranslate\Entity\Website');
         }
 
         return $this->er;

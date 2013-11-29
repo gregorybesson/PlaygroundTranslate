@@ -15,9 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity @HasLifecycleCallbacks
- * @ORM\Table(name="translate_site_country")
+ * @ORM\Table(name="translate_website")
  */
-class SiteCountry implements InputFilterAwareInterface
+class Website implements InputFilterAwareInterface
 {
 
     protected $inputFilter;
@@ -62,8 +62,8 @@ class SiteCountry implements InputFilterAwareInterface
     /**
      * @var \Doctrine\Common\Collections\Collection
      * @ORM\ManyToMany(targetEntity="PlaygroundTranslate\Entity\Locale")
-     * @ORM\JoinTable(name="translate_sitecountry_locale",
-     *      joinColumns={@ORM\JoinColumn(name="sitecountry_id", referencedColumnName="id", onDelete="CASCADE")},
+     * @ORM\JoinTable(name="translate_website_locale",
+     *      joinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="locale_id", referencedColumnName="id")}
      * )
      */
@@ -83,7 +83,7 @@ class SiteCountry implements InputFilterAwareInterface
 
     /**
      * @param string $id
-     * @return SiteCountry
+     * @return Website
      */
     public function setId($id)
     {
@@ -123,7 +123,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param string $name
-     * @return SiteCountry
+     * @return Website
      */
     public function setName($name)
     {
@@ -142,7 +142,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param string $code
-     * @return SiteCountry
+     * @return Website
      */
     public function setCode($code)
     {
@@ -161,7 +161,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param string $phase
-     * @return SiteCountry
+     * @return Website
      */
     public function setPhase($phase)
     {
@@ -180,7 +180,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param string $active
-     * @return SiteCountry
+     * @return Website
      */
     public function setActive($active)
     {
@@ -199,7 +199,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param string $default
-     * @return SiteCountry
+     * @return Website
      */
     public function setDefault($default)
     {
@@ -218,7 +218,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param PlaygroundTranslate\Entity\Locale $locales
-     * @return SiteCountry
+     * @return Website
      */
     public function setLocales($locales)
     {
@@ -229,7 +229,7 @@ class SiteCountry implements InputFilterAwareInterface
     
     /**
      * @param PlaygroundTranslate\Entity\Locale $locale
-     * @return SiteCountry
+     * @return Website
      */
     public function addLocale($locale)
     {
@@ -239,7 +239,7 @@ class SiteCountry implements InputFilterAwareInterface
     }
 
     /**
-     * @return the unknown_type
+     * @return datetime $created_at
      */
     public function getCreatedAt()
     {
@@ -247,7 +247,7 @@ class SiteCountry implements InputFilterAwareInterface
     }
 
     /**
-     * @param unknown_type $created_at
+     * @param datetime $created_at
      */
     public function setCreatedAt($created_at)
     {
@@ -257,7 +257,7 @@ class SiteCountry implements InputFilterAwareInterface
     }
 
     /**
-     * @return the unknown_type
+     * @return datetime $updated_at
      */
     public function getUpdatedAt()
     {
@@ -265,7 +265,7 @@ class SiteCountry implements InputFilterAwareInterface
     }
 
     /**
-     * @param unknown_type $updated_at
+     * @param datetime $updated_at
      */
     public function setUpdatedAt($updated_at)
     {
@@ -274,12 +274,16 @@ class SiteCountry implements InputFilterAwareInterface
         return $this;
     }
 
+    /**
+    * getFlag : get path for flag associate to the country
+    *
+    * @param string $flag 
+    */
     public function getFlag()
     {
         return "/lib/flag/".strtolower($this->getCode());
     }
 
-   
 
     /**
      * Populate from an array.
