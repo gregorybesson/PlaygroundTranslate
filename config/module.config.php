@@ -80,6 +80,28 @@ return array(
             ),
         ),
     ),
+    'assetic_configuration' => array(
+        'modules' => array(
+            'translate_lib' => array(
+                # module root path for your css and js files
+                'root_path' => array(
+                    __DIR__ . '/../view/lib',
+                ),
+                # collection of assets
+                'collections' => array(    
+                    'flagTranslate' => array(
+                        'assets' => array(
+                            'flag/*.png',
+                        ),
+                        'options' => array(
+                            'move_raw' => true,
+                            'output' => 'lib',
+                        )
+                    ),
+                ),
+            ),
+        ),
+    ),
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
