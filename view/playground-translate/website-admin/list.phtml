@@ -1,4 +1,4 @@
-<?php $this->plugin('translate')->setTranslatorTextDomain('citroen'); ?>
+<?php $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate'); ?>
 
 <h1 class="f-left"><?php echo $this->translate('Website Country list'); ?></h1>
 
@@ -9,11 +9,11 @@
 	<div class="col-md-4">
 		<div class="country-box margin-left10 margin-right10" >
 			<div class='pull-left margin-left10 sitecountry'>
-				<a href="<?php echo $this->url('admin/citroenadmin/contact/list');?>"><span class="glyphicon glyphicon-export"></span></a>
+				<a href="#"><span class="glyphicon glyphicon-export"></span></a>
 				<a data-toggle="modal" href="#model_<?php echo $siteCountry->getId(); ?>"><?php echo $siteCountry->getName() ?> (<?php echo "T".$siteCountry->getPhase() ?>)</a>
 			</div>
 		
-			<div class="pull-right margin-right10 make-switch" data-on="success" data-off="danger" onclick="window.location='<?php echo $this->url('admin/citroenadmin/sitecountry/edit-active', array("siteCountryId" => $siteCountry->getId())) ?>'">
+			<div class="pull-right margin-right10 make-switch" data-on="success" data-off="danger" onclick="window.location='<?php echo $this->url('admin/sitecountry/edit-active', array("siteCountryId" => $siteCountry->getId())) ?>'">
 			    <input type="checkbox" <?php if($siteCountry->getActive()) : ?>checked<?php endif ?>>
 			</div>
 

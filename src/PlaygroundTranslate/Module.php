@@ -91,7 +91,7 @@ class Module
                 },
 
                 'playgroundtranslate_website_mapper' => function  ($sm) {
-                    return new Mapper\Website($sm->get('citroen_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
+                    return new Mapper\Website($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
                 },
             ),
             'invokables' => array(
