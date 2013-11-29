@@ -9,7 +9,7 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Validator\NotEmpty;
 use ZfcBase\EventManager\EventProvider;
-use Citroen\Options\ModuleOptions;
+use PlaygroundTranslate\Options\ModuleOptions;
 use DoctrineModule\Validator\NoObjectExists as NoObjectExistsValidator;
 use Zend\Stdlib\ErrorHandler;
 
@@ -69,7 +69,7 @@ class Website extends EventProvider implements ServiceManagerAwareInterface
      * @param  string $website
      * @param  string $formClass
      *
-     * @return \Citroen\Entity\Website
+     * @return \PlaygroundTranslate\Entity\Website
      */
     public function edit(array $data, $website)
     {
@@ -107,7 +107,7 @@ class Website extends EventProvider implements ServiceManagerAwareInterface
      * setWebsiteMapper
      * @param  Mapper/Website $websiteMapper
      *
-     * @return Citroen\Entity\WebsiteMapper websiteMapper
+     * @return PlaygroundTranslate\Entity\WebsiteMapper websiteMapper
      */
     public function setWebsiteMapper($websiteMapper)
     {
