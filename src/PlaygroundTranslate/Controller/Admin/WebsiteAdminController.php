@@ -41,9 +41,15 @@ class WebsiteAdminController extends AbstractActionController
 		$websiteId = $this->getEvent()->getRouteMatch()->getParam('websiteId');
 		$website = $this->getWebsiteService()->getWebsiteMapper()->findBy(array('id' => $websiteId));
 		$website = $website[0];
+        
+        if($website->getDefault()) {
+            
+            return $this->redirect()->toRoute('admin');
+        }
 		$website->setActive(!$website->getActive());
 		$this->getWebsiteService()->getWebsiteMapper()->update($website);
-		$this->redirect()->toRoute('admin');
+		
+        return $this->redirect()->toRoute('admin');
 	}
 
 	public function getWebsiteService()

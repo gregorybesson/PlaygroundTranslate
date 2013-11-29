@@ -90,14 +90,14 @@ class Module
                     return new Mapper\Locale($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
                 },
 
-                'playgroundtranslate_sitecountry_mapper' => function  ($sm) {
-                    return new Mapper\SiteCountry($sm->get('citroen_doctrine_em'), $sm->get('citroen_module_options'));
+                'playgroundtranslate_website_mapper' => function  ($sm) {
+                    return new Mapper\Website($sm->get('citroen_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
                 },
             ),
             'invokables' => array(
                 'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
                 'playgroundtranslate_translate_service' => 'PlaygroundTranslate\Service\Translate',
-                'playgroundtranslate_sitecountry_service' => 'PlaygroundTranslate\Service\SiteCountry',
+                'playgroundtranslate_website_service' => 'PlaygroundTranslate\Service\Website',
             ),
         );
     }

@@ -31,7 +31,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             return false;
         }
 
-        $return = $this->writeFile($data['locale'], $content);
+        $return = $this->writeFile($data['locale'], $content, 'csv');
         if($return === false){
             return false;
         }
@@ -75,11 +75,16 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     * 
     * @return mixed $mixed retour du file_put_contents pour le fichier temporaire
     */
-    public function writeFile($locale, $content)
+    public function writeFile($locale, $content, $context = null)
     {
         $translate = "";
         foreach ($content as $key => $value) {
-            $translate .= "    '".$key."' => '".utf8_encode($value)."',\n";
+            if($context != null){
+                $translate .= "    '".$key."' => '".utf8_encode($value)."',\n";  
+            }else {
+                $translate .= "    '".$key."' => '".($value)."',\n";
+            }
+            
         }
 
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');

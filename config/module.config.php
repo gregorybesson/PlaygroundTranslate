@@ -62,12 +62,12 @@ return array(
                             ),
                         ),
                     ),
-                    'sitecountry' => array(
+                    'website' => array(
                         'type' => 'Segment',
                         'options' => array(
                             'route' => '/sitecountry',
                             'defaults' => array(
-                                'controller' => 'PlaygroundTranslate\Controller\Admin\SiteCountryAdmin',
+                                'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
                                 'action'     => 'index',
                             ),
                         ),
@@ -78,7 +78,7 @@ return array(
                                 'options' => array(
                                      'route' => '/list',
                                     'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\SiteCountryAdmin',
+                                        'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
                                         'action'     => 'list',
                                     ),
                                 ),
@@ -86,13 +86,13 @@ return array(
                             'edit-active' => array(
                                 'type' => 'Segment',
                                 'options' => array(
-                                     'route' => '/edit-active/[:siteCountryId]',
+                                     'route' => '/edit-active/[:websiteId]',
                                     'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\SiteCountryAdmin',
+                                        'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
                                         'action'     => 'editactive',
                                     ),
                                     'constraints' => array(
-                                        'siteCountryId' => '[0-9]*',
+                                        'websiteId' => '[0-9]*',
                                     ),
                                 ),
                             ),
@@ -101,7 +101,7 @@ return array(
                                 'options' => array(
                                      'route' => '/edit-active',
                                     'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\SiteCountryAdmin',
+                                        'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
                                         'action'     => 'editlocales',
                                     ),
                                 ),
@@ -156,9 +156,9 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'PlaygroundTranslate\Controller\Admin\TranslateAdmin' => 'PlaygroundTranslate\Controller\Admin\TranslateAdminController',
+            'PlaygroundTranslate\Controller\Admin\TranslateAdmin'  => 'PlaygroundTranslate\Controller\Admin\TranslateAdminController',
             'PlaygroundTranslate\Controller\Frontend\SwitchLocale' => 'PlaygroundTranslate\Controller\Frontend\SwitchLocaleController',
-            'PlaygroundTranslate\Controller\Admin\SiteCountryAdmin' => 'PlaygroundTranslate\Controller\Admin\SiteCountryAdminController',
+            'PlaygroundTranslate\Controller\Admin\WebsiteAdmin'    => 'PlaygroundTranslate\Controller\Admin\WebsiteAdminController',
         ),
     ),
     'navigation' => array(
