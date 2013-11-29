@@ -109,7 +109,8 @@ class Module
                 'switchLocaleWidget' => function ($sm) {
                     $viewHelper = new View\Helper\SwitchLocaleWidget();
                     $viewHelper->setLocaleService($sm->getServiceLocator()->get('playgroundtranslate_locale_service'));
-                    
+                    $viewHelper->setWebsiteService($sm->getServiceLocator()->get('playgroundtranslate_website_service'));
+                    $viewHelper->setRouteMatch($sm->getServiceLocator()->get('application')->getMvcEvent()->getRouteMatch());
                     return $viewHelper;
                 },
             ),

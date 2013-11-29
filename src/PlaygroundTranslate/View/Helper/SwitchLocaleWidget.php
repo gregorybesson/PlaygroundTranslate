@@ -24,8 +24,23 @@ class SwitchLocaleWidget extends AbstractHelper
 
             return $locales;
         }
-        $filter = 'active_'.$options['context'];
-        $locales['locales'] = $this->getLocaleService()->getLocaleMapper()->findBy(array($filter => 1));
+        $activeFilter = 'active_'.$options['context'];
+        $filters = array($activeFilter => 1);
+        if($options['context'] == 'front') {
+            $locale = str_replace("/", "", $this->getRouteMatch()->getParam('locale'));
+            $websites = $this->getWebsiteService()->getWebsiteMapper()->findBy(array('code' => $locale));
+            if(empty($websites)){
+               return array('locales' => array());
+            } 
+            $website = $websites[0];
+            $locales['locales'] = $website->getLocales();
+            if(count($locales['locales']) == 1) {
+                return array('locales' => array());
+            }
+        } else {
+           $locales['locales'] = $this->getLocaleService()->getLocaleMapper()->findBy($filters); 
+        }
+        
         $locales['context'] = $options['context'];
 
         return $locales;
@@ -51,6 +66,31 @@ class SwitchLocaleWidget extends AbstractHelper
     {
         $this->localeService = $localeService;
     }
- 
+    
+    public function setRouteMatch($routeMatch)
+    {
+        $this->routeMatch = $routeMatch;
+    }
 
+     public function getRouteMatch()
+    {
+      
+        return $this->routeMatch;
+    }
+
+    public function getWebsiteService()
+    {
+        if (null === $this->websiteService) {
+            $this->websiteService = $this->getServiceLocator()->get('playgroundtranslate_website_service');
+        }
+
+        return $this->websiteService;
+    }
+
+    public function setWebsiteService($websiteService)
+    {
+        $this->websiteService = $websiteService;
+
+        return $this;
+    }
 }
