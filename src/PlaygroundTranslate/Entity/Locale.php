@@ -41,12 +41,12 @@ class Locale implements InputFilterAwareInterface
 
      /**
      * active_back
-     * @ORM\Column(type="integer", length=1, nullable=false)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $active_back = 0;
      /**
      * active_front
-     * @ORM\Column(type="integer", length=1, nullable=false)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $active_front = 0;
 
@@ -203,6 +203,17 @@ class Locale implements InputFilterAwareInterface
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    public function getFlag()
+    {
+        $flags = explode('_', $this->getLocale());
+
+        if(empty($flags)) {
+            return '';
+        }
+
+        return "/lib/flag/".strtolower($flags[1]);
     }
 
     /**
