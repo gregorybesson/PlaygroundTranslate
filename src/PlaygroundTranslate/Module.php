@@ -81,20 +81,26 @@ class Module
                     
                     return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
                 },
+                
                 'playgroundtranslate_translate_form' => function  ($sm) {
                     $translator = $sm->get('translator');
                     $form = new Form\Admin\Translate(null, $sm, $translator);
                     
                     return $form;
                 },
+
                 'playgroundtranslate_locale_mapper' => function  ($sm) {
                     return new Mapper\Locale($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
+                },
+
+                'playgroundtranslate_sitecountry_mapper' => function  ($sm) {
+                    return new Mapper\SiteCountry($sm->get('citroen_doctrine_em'), $sm->get('citroen_module_options'));
                 },
             ),
             'invokables' => array(
                 'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
                 'playgroundtranslate_translate_service' => 'PlaygroundTranslate\Service\Translate',
-
+                'playgroundtranslate_sitecountry_service' => 'PlaygroundTranslate\Service\SiteCountry',
             ),
         );
     }
