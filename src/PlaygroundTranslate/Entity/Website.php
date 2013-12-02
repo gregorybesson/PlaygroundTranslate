@@ -54,7 +54,7 @@ class Website implements InputFilterAwareInterface
 
     /**
      * default
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $by_default = 0;
 
