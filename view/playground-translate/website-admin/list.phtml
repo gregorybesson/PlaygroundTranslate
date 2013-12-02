@@ -1,19 +1,18 @@
 <?php $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate'); ?>
-
+<?php $associatedUserCountry = $this->associatedUsersCountry(); ?>
 <h1 class="f-left"><?php echo $this->translate('Website Country list'); ?></h1>
 
 <div class="row siteCountries">
 
-<?php foreach ($siteCountries as $siteCountry): ?>
+<?php foreach ($websites as $siteCountry): ?>
 
 	<div class="col-md-4">
 		<div class="country-box margin-left10 margin-right10" >
 			<div class='pull-left margin-left10 sitecountry'>
-				<a href="#"><span class="glyphicon glyphicon-export"></span></a>
-				<a data-toggle="modal" href="#model_<?php echo $siteCountry->getId(); ?>"><?php echo $siteCountry->getName() ?> (<?php echo "T".$siteCountry->getPhase() ?>)</a>
+				<a data-toggle="modal" href="#model_<?php echo $siteCountry->getId(); ?>"><?php echo $this->translate($siteCountry->getName()); ?> (<?php echo "T".$siteCountry->getPhase() ?>)</a>
 			</div>
 		
-			<div class="pull-right margin-right10 make-switch" data-on="success" data-off="danger" onclick="window.location='<?php echo $this->url('admin/sitecountry/edit-active', array("siteCountryId" => $siteCountry->getId())) ?>'">
+			<div class="pull-right margin-right10 make-switch" data-on="success" data-off="danger" onclick="window.location='<?php echo $this->url('admin/website/edit-active', array("websiteId" => $siteCountry->getId())) ?>'">
 			    <input type="checkbox" <?php if($siteCountry->getActive()) : ?>checked<?php endif ?>>
 			</div>
 
@@ -47,10 +46,12 @@
 		            	<?php endforeach ?>
 		            	</div>
 		            	<h3><?php echo $this->translate('Administrators'); ?></h3>
-						<ul>
-							<?php foreach ($siteCountry->getUsers() as $user): ?>
-		            			<li><?php echo $user->getName() ?><br /></li>
-		            		<?php endforeach ?>
+						<ul class="list-unstyled">
+							<?php if(!empty($associatedUserCountry[$siteCountry->getId()])) : ?>
+								<?php foreach ($associatedUserCountry[$siteCountry->getId()] as $user): ?>
+			            			<li><?php echo $user; ?><br /></li>
+			            		<?php endforeach ?>
+		            		<?php endif; ?>
 		            	</ul>
 					</div>
 					<div class="modal-footer">
