@@ -203,7 +203,7 @@ class Website implements InputFilterAwareInterface
      */
     public function setDefault($default)
     {
-        $this->by_default = (string) $default;
+        $this->by_default = (int) $default;
     
         return $this;
     }
