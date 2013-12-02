@@ -80,7 +80,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $translate = "";
         foreach ($content as $key => $value) {
             if($context != null){
-                $translate .= "    '".$key."' => '".utf8_encode($value)."',\n";  
+                $translate .= "    '".$key."' => '".addslashes(utf8_encode($value))."',\n";  
             }else {
                 $translate .= "    '".$key."' => '".($value)."',\n";
             }
