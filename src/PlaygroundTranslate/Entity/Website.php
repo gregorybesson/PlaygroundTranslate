@@ -54,7 +54,7 @@ class Website implements InputFilterAwareInterface
 
     /**
      * default
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $by_default = 0;
 
@@ -203,7 +203,7 @@ class Website implements InputFilterAwareInterface
      */
     public function setDefault($default)
     {
-        $this->by_default = (string) $default;
+        $this->by_default = (int) $default;
     
         return $this;
     }
