@@ -1,76 +1,74 @@
 <?php
-    $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate');
+    $this->plugin('translate')->setTranslatorTextDomain('citroen');
     $user = $this->user;
     $locales = $this->locales;
+    $translates = $this->translates;
 
     $form = $this->form;
     $form->prepare();
-
-    if($user->getRole()->getRoleId() == "c_admin") {
-        $locales = array();
-        foreach ($user->getSiteCountries() as $siteCountry) {
-            foreach ($siteCountry->getLocales() as $localesByCountry) {
-                $locales[] = $localesByCountry;
-            }
-        }
-    
-        $localesForm = array();
-        foreach ($locales as $key => $locale) {
-            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
-        }
-        $form->get('locale')->setValueOptions($localesForm);
-    }
     $form->get('submit')->setLabel($this->translate('validate'));
-
-    
 ?>
 
-<div class="row">
-    <div class="span8">
-        <fieldset>
-            <legend><?php echo $this->translate('upload translate'); ?></legend>
+<div class="row translate">
+    <div class="col-md-8">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title"><?php echo $this->translate('upload translate'); ?></h3>
+        </div>
+        <div class="panel-body">
             <?php echo $this->form()->openTag($form);  ?>
-            
-            <?php echo $this->formLabel($form->get('uploadTranslate')); ?>
-            <?php echo $this->formFile($form->get('uploadTranslate')); ?>
-
-            <?php echo $this->formLabel($form->get('locale')); ?>
-            <?php echo $this->formSelect($form->get('locale')); ?>
-
-            <?php echo $this->formButton($form->get('submit')); ?>
+            <div class="form-group">
+                <?php echo $this->formLabel($form->get('uploadTranslate')); ?>
+                <?php echo $this->formFile($form->get('uploadTranslate')->setAttribute('class', 'form-control')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($form->get('locale')); ?>
+                <?php echo $this->formSelect($form->get('locale')->setAttribute('class', 'form-control')); ?>
+            </div>
+            <div class='pull-right margin-right30'>
+                <?php echo $this->formButton($form->get('submit')->setAttribute('class', 'btn btn-success')) ?>
+            </div>
             <?php echo $this->form()->closeTag(); ?>
-        </fieldset>
-
-        <fieldset>
-            <form action="/admin/translate/update" method="post">
-                <legend><?php echo $this->translate('update translate'); ?></legend>
-                <table>
+        </div>
+    </div>
+    <hr />
+    <form action="/admin/translate/update" method="post">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+              <h3 class="panel-title"><?php echo $this->translate('update translate'); ?></h3>
+            </div>
+            <div class="panel-body">
+                <div class='pull-right margin-right30'>
+                    <?php echo $this->formButton($form->get('submit')->setAttribute('class', 'btn btn-success')) ?>
+                </div>
+                <div class="clearfix"></div>
+                <table class="table">
                     <thead>
                         <tr>
                             <td>clé </td>
-                            <?php foreach (array_keys($this->translates) as $locale) : ?>
+                            <?php foreach (array_keys($translates) as $locale) : ?>
                                  <td><?php echo $locale; ?></td>
                             <?php endforeach ; ?>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach($keys as $key) : ?>
+                        <tr>
+                            <td> <?php echo $key; ?></td>
+                            <?php foreach (array_keys($translates) as $locale) : ?>
+                                <td>
+                                    <textarea class="form-control" rows="3" name="translate[<?php echo $locale ?>][<?php echo $key ?>]"><?php echo !empty($translates[$locale][$key])?$translates[$locale][$key]:''; ?></textarea>  
+                                </td>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php endforeach ; ?>
                     </tbody>
-                    <?php foreach($keys as $key) : ?>
-                    <tr>
-                        <td> <?php echo $key; ?></td>
-                        <?php foreach (array_keys($this->translates) as $locale) : ?>
-                            <td>
-                                <textarea name="translate[<?php echo $locale ?>][<?php echo $key ?>]"><?php echo !empty($this->translates[$locale][$key])?$this->translates[$locale][$key]:''; ?></textarea>  
-                            </td>
-                        <?php endforeach; ?>
-                    </tr>
-                    <?php endforeach ; ?>
                  </table>
-                <input type="submit" />
-            </form>
-        </fieldset>
+            </div>
+        </div>
+    </form>
     </div>
-    <div class="span4">
+     <div class="col-md-4">
         <?php echo $this->translate('history'); ?>
     </div>
 </div>
