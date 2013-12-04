@@ -52,8 +52,9 @@ class TranslateAdminController extends AbstractActionController implements Servi
 
         $localesForm = array();
         foreach ($locales as $key => $locale) {
-            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
+            $localesForm[$locale->getLocale()] = $locale->getName();
         }
+
 
         $form = $this->getTranslateForm();
         $form->get('locale')->setValueOptions($localesForm);
@@ -88,12 +89,17 @@ class TranslateAdminController extends AbstractActionController implements Servi
                 }
             }
         }
-        
+
+        $historicals = $this->getHistoricalTranslate($localesForm);
+        krsort($historicals);
+
         return $viewModel->setVariables(array('form' => $form, 
                                               'locales' => $locales,
                                               'user' => $user,
                                               'translates' => $translates,
-                                              'keys' => $keys));
+                                              'keys' => $keys,
+                                              'localesForm' => $localesForm,
+                                              'historicals' => $historicals));
     }
 
     /**
@@ -133,6 +139,17 @@ class TranslateAdminController extends AbstractActionController implements Servi
         }
 
         return $this->redirect()->toRoute('admin/playgroundtranslate');
+    }
+
+
+    public function getHistoricalTranslate($localesForm)
+    {
+        $historicals = array();
+        foreach (array_keys($localesForm) as $key) {
+            $historicals = $this->getTranslateService()->getHistorical($historicals, $key);
+        }
+
+        return $historicals;
     }
 
     /**

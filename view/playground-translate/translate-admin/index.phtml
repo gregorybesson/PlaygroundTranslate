@@ -9,8 +9,9 @@
     $form->get('submit')->setLabel($this->translate('validate'));
 ?>
 
+
 <div class="row translate">
-    <div class="col-md-8">
+    <div class="col-md-9">
     <div class="panel panel-primary">
         <div class="panel-heading">
           <h3 class="panel-title"><?php echo $this->translate('upload translate'); ?></h3>
@@ -68,7 +69,30 @@
         </div>
     </form>
     </div>
-     <div class="col-md-4">
-        <?php echo $this->translate('history'); ?>
+     <div class="col-md-3">
+        <div class="panel panel-success">
+        <div class="panel-heading">
+          <h3 class="panel-title"><?php echo $this->translate('history'); ?></h3>
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                <?php foreach ($this->historicals as $historical) : ?>
+                    <a href="#" class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                            <?php $date = $historical['datetime']; ?>
+                            <?php $dateFormat = $this->translate('date_format'); ?>
+                            <?php if(strpos('H:i:s', $dateFormat) === false) : ?>
+                                <?php $dateFormat = 'H:i:s d/m/Y'; ?>
+                            <?php endif; ?>
+                            <?php echo $date->format($dateFormat); ?>
+                        </h4>
+                        <p class="list-group-item-text">
+                        <?php echo $this->translate('New import of translate'); ?>  <?php echo $this->translate($this->localesForm[$historical['locale']]); ?>
+                        </p>
+                    </a>
+              <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
     </div>
 </div>
