@@ -140,6 +140,31 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $translates;
     }
 
+    /**
+    * getHistory : Permet de recuperer les historiques de traductions
+    * @param array $historicals tableau de d'historique de traductions
+    * @param string $key clé de locale 
+    * 
+    * @return array $historicals tableau de d'historique de traductions
+    */
+    public function getHistory($historicals, $key)
+    {
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+        $dir = opendir(__DIR__.$pathTranslate.'revisions/');
+        while($file = readdir($dir)) { 
+            if($file != '.' && $file != '..' && !is_dir(__DIR__.$pathTranslate.$file) && strpos($file, $key) !== false) {
+                $filename = explode(".", $file);
+                $datetime = $filename[2];
+                $datetime = \DateTime::createFromFormat('YmdHis', $datetime);
+                $historicals[$filename[2]] = array('locale' => $key,
+                                                'datetime'=> $datetime);
+            }
+        }
+
+        return $historicals;
+    }
+
 
     /**
      * Retrieve service manager instance
