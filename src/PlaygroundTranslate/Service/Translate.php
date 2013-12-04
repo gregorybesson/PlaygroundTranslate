@@ -140,7 +140,14 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $translates;
     }
 
-    public function getHistorical($historicals, $key)
+    /**
+    * getHistory : Permet de recuperer les historiques de traductions
+    * @param array $historicals tableau de d'historique de traductions
+    * @param string $key clé de locale 
+    * 
+    * @return array $historicals tableau de d'historique de traductions
+    */
+    public function getHistory($historicals, $key)
     {
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
