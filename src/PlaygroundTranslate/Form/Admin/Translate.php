@@ -80,7 +80,7 @@ class Translate extends ProvidesEventsForm
     */
     public function getLocales()
     {   
-        $locales = $this->serviceManager->get('playgroundtranslate_locale_service')->getLocaleMapper()->findAll();
+        $locales = $this->serviceManager->get('playgroundcore_locale_service')->getLocaleMapper()->findAll();
         $localesForm = array();
         foreach ($locales as $key => $locale) {
             $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
