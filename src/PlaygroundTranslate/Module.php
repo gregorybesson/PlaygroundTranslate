@@ -86,33 +86,12 @@ class Module
                     return $form;
                 },
 
-                'playgroundtranslate_locale_mapper' => function  ($sm) {
-                    return new Mapper\Locale($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
-                },
+                
 
-                'playgroundtranslate_website_mapper' => function  ($sm) {
-                    return new Mapper\Website($sm->get('playgroundtranslate_doctrine_em'), $sm->get('playgroundtranslate_module_options'));
-                },
+               
             ),
             'invokables' => array(
-                'playgroundtranslate_locale_service' => 'PlaygroundTranslate\Service\Locale',
                 'playgroundtranslate_translate_service' => 'PlaygroundTranslate\Service\Translate',
-                'playgroundtranslate_website_service' => 'PlaygroundTranslate\Service\Website',
-            ),
-        );
-    }
-
-    public function getViewHelperConfig()
-    {
-        return array(
-            'factories' => array(
-                'switchLocaleWidget' => function ($sm) {
-                    $viewHelper = new View\Helper\SwitchLocaleWidget();
-                    $viewHelper->setLocaleService($sm->getServiceLocator()->get('playgroundtranslate_locale_service'));
-                    $viewHelper->setWebsiteService($sm->getServiceLocator()->get('playgroundtranslate_website_service'));
-                    $viewHelper->setRouteMatch($sm->getServiceLocator()->get('application')->getMvcEvent()->getRouteMatch());
-                    return $viewHelper;
-                },
             ),
         );
     }

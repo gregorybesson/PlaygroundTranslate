@@ -165,7 +165,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     public function getLocaleService()
     {
         if($this->localeService === null){
-            $this->localeService = $this->getServiceLocator()->get('playgroundtranslate_locale_service');
+            $this->localeService = $this->getServiceLocator()->get('playgroundcore_locale_service');
         }
         return $this->localeService;
     }

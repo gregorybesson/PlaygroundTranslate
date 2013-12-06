@@ -8,21 +8,7 @@
  */
 
 return array(
-    'doctrine' => array(
-        'driver' => array(
-            'playgroundtranslate_entity' => array(
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'cache' => 'array',
-                'paths' => __DIR__ . '/../src/PlaygroundTranslate/Entity'
-            ),
-            
-            'orm_default' => array(
-                'drivers' => array(
-                    'PlaygroundTranslate\Entity'  => 'playgroundtranslate_entity'
-                )
-            )
-        )
-    ),
+    
     'translator' => array(
         'locale' => 'fr_FR',
         'translation_file_patterns' => array(
@@ -62,92 +48,12 @@ return array(
                             ),
                         ),
                     ),
-                    'website' => array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => '/sitecountry',
-                            'defaults' => array(
-                                'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
-                                'action'     => 'index',
-                            ),
-                        ),
-                        'may_terminate' => true,
-                        'child_routes' => array(
-                            'list' => array(
-                                'type' => 'Segment',
-                                'options' => array(
-                                     'route' => '/list',
-                                    'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
-                                        'action'     => 'list',
-                                    ),
-                                ),
-                            ),
-                            'edit-active' => array(
-                                'type' => 'Segment',
-                                'options' => array(
-                                     'route' => '/edit-active/[:websiteId]',
-                                    'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
-                                        'action'     => 'editactive',
-                                    ),
-                                    'constraints' => array(
-                                        'websiteId' => '[0-9]*',
-                                    ),
-                                ),
-                            ),
-                            'edit-locales' => array(
-                                'type' => 'Segment',
-                                'options' => array(
-                                     'route' => '/edit-active',
-                                    'defaults' => array(
-                                        'controller' => 'PlaygroundTranslate\Controller\Admin\WebsiteAdmin',
-                                        'action'     => 'editlocales',
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'frontend' => array(
-                'child_routes' => array(
-                    'locale' => array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => 'switch/[:locale]/[:context]/[:referer]',
-                            'defaults' => array(
-                                'controller' => 'PlaygroundTranslate\Controller\Frontend\SwitchLocale',
-                                'action'     => 'switch',
-                            ),
-                        ),
-                    ),
+                   
                 ),
             ),
         ),
     ),
-    'assetic_configuration' => array(
-        'modules' => array(
-            'translate_lib' => array(
-                # module root path for your css and js files
-                'root_path' => array(
-                    __DIR__ . '/../view/lib',
-                ),
-                # collection of assets
-                'collections' => array(    
-                    'flags' => array(
-                        'assets' => array(
-                            'flag/*.png',
-                        ),
-                        'options' => array(
-                            'move_raw' => true,
-                            'output' => 'lib',
-                        )
-                    ),
-                ),
-            ),
-        ),
-    ),
+
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -157,8 +63,6 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'PlaygroundTranslate\Controller\Admin\TranslateAdmin'  => 'PlaygroundTranslate\Controller\Admin\TranslateAdminController',
-            'PlaygroundTranslate\Controller\Frontend\SwitchLocale' => 'PlaygroundTranslate\Controller\Frontend\SwitchLocaleController',
-            'PlaygroundTranslate\Controller\Admin\WebsiteAdmin'    => 'PlaygroundTranslate\Controller\Admin\WebsiteAdminController',
         ),
     ),
     'navigation' => array(
