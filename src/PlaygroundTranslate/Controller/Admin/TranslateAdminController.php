@@ -13,6 +13,7 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Http\Response;
 
 class TranslateAdminController extends AbstractActionController implements ServiceLocatorAwareInterface
 {
@@ -67,7 +68,13 @@ class TranslateAdminController extends AbstractActionController implements Servi
                     $request->getFiles()->toArray()
             );  
 
-            $return  = $this->getTranslateService()->upload($data);
+            if(!empty($data['export'])){
+                $return  = $this->getTranslateService()->export($data);
+                return $this->exportTranslate($return, $data);
+            }else{
+                $return  = $this->getTranslateService()->upload($data);   
+            }
+
             
             if(! $return){
                 $this->flashMessenger()->addMessage('The translate has not been updated');
@@ -155,6 +162,33 @@ class TranslateAdminController extends AbstractActionController implements Servi
         }
 
         return $historicals;
+    }
+
+    public function exportTranslate($translates, $data)
+    {
+        $content = '';
+        foreach ($translates as $key => $value) {
+            $content .= $key.';'.$value."\n";
+        }
+
+        // Excel SYLK-Bug
+        // http://support.microsoft.com/kb/323626/fr
+        $content = preg_replace('/^ID/', 'id', $content);
+        $content = utf8_decode($content);
+        $intLength = mb_strlen($content, 'utf-8');
+
+
+        $response = new Response();
+        $response->setStatusCode(Response::STATUS_CODE_200);
+
+        $response->getHeaders()
+            ->addHeaderLine('Content-Type', 'text/csv')
+            ->addHeaderLine('Content-Disposition', "attachment; filename=".$data['locale'] . "-export.csv")
+            ->addHeaderLine('Accept-Ranges', 'bytes')
+            ->addHeaderLine('Content-Length', strlen($content));
+
+        $response->setContent($content);
+        return $response;
     }
 
     /**
