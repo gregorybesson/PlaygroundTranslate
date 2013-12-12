@@ -56,7 +56,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             return false;
         }
 
-        while (($cols = fgetcsv($handle, 1000, "\t")) !== FALSE) {
+        while (($cols = fgetcsv($handle, 0, "\t")) !== FALSE) {
             foreach ($cols as $row) {
                 $rowTab = explode(";", $row);
                 if(!empty($rowTab[0]) && !empty($rowTab[1])) {
