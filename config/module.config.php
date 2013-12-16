@@ -63,15 +63,7 @@ return array(
                 'label' => 'Translate',
                 'route' => 'admin/playgroundtranslate',
                 'resource' => 'translate',
-                'privilege' => 'list',
-                'pages' => array(
-                    'list-pages' => array(
-                        'label' => 'Translate',
-                        'route' => 'admin/playgroundtranslate',
-                        'resource' => 'translate',
-                        'privilege' => 'list',
-                    ),
-                ),    
+                'privilege' => 'list',  
             ),
         ),
     ),
