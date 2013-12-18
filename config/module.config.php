@@ -39,8 +39,24 @@ return array(
                                 ),
                             ),
                         ),
+                        'may_terminate' => true,
+
                     ),
                    
+                ),
+            ),
+            'apitranslate' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/translate/list/:key[/:locale]',
+                    'constraints' => array(
+                        'key'       => '[a-zA-Z]+',
+                        'locale'     => '[a-zA-Z_]+',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'PlaygroundTranslate\Controller\Api\Translate',
+                        'action'     => 'list',
+                    ),
                 ),
             ),
         ),
@@ -55,6 +71,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'PlaygroundTranslate\Controller\Admin\TranslateAdmin'  => 'PlaygroundTranslate\Controller\Admin\TranslateAdminController',
+            'PlaygroundTranslate\Controller\Api\Translate'  => 'PlaygroundTranslate\Controller\Api\TranslateController',
         ),
     ),
     'navigation' => array(
