@@ -84,9 +84,11 @@ class TranslateAdminController extends AbstractActionController implements Servi
         $translates = $this->getTranslateService()->readLanguagesFiles();
         $keys = array();
         foreach ($translates as $locale => $translate) {
-            foreach (array_keys($translate) as $value) {
-                if(empty($keys[$value])) {
-                    $keys[$value] = $value;
+            if(is_array($translate)){
+                foreach (array_keys($translate) as $value) {
+                    if(empty($keys[$value])) {
+                        $keys[$value] = $value;
+                    }
                 }
             }
         }

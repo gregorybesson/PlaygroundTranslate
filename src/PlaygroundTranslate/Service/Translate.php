@@ -55,7 +55,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         if (($handle = fopen($data['uploadTranslate']['tmp_name'], "r")) === FALSE){
             return false;
         }
-
+    
         while (($cols = fgetcsv($handle, 0, "\t")) !== FALSE) {
             foreach ($cols as $row) {
                 $rowTab = explode(";", $row);
@@ -79,14 +79,9 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     {
         $translate = "";
         foreach ($content as $key => $value) {
-            if($context != null){
-                $translate .= '    "'.$key.'" => "'.utf8_encode(str_replace('"', '\"', $value)).'",'."\n";  
-            }else {
-                $translate .= '    "'.$key.'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
-            }
-            
+            $translate .= '    "'.$key.'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
-
+        
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
 
