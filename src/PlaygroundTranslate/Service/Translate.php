@@ -135,6 +135,22 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $translates;
     }
 
+    /**
+    * readLanguageFile : Permet de lire un fichier de traductions en fonction de la locale
+    * @param string $locale : locale 
+    *
+    * @return array $translates tableau de traductions
+    */
+    public function readLanguageFile($locale)
+    {
+        $translates = array();
+
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+
+        return @include(__DIR__.$pathTranslate.$locale.".php");
+    }
+
 
     public function export($data)
     {
