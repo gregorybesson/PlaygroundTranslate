@@ -63,10 +63,12 @@ class TranslateController extends AbstractActionController implements ServiceLoc
         }
         $translatesSelected = array();
         $translates = $this->getTranslateService()->readLanguageFile($locale);
-        foreach ($translates as $translateKey => $translateValue) {
-            $pattern = "/^".$key."/";
-            if (preg_match($pattern, strtolower($translateKey))) {
-                $translatesSelected[$translateKey] = $translateValue;
+        if ($translates) {
+            foreach ($translates as $translateKey => $translateValue) {
+                $pattern = "/^".$key."/";
+                if (preg_match($pattern, strtolower($translateKey))) {
+                    $translatesSelected[$translateKey] = $translateValue;
+                }
             }
         }
 
