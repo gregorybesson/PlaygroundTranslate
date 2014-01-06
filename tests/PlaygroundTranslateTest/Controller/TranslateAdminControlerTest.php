@@ -28,12 +28,22 @@ class TranslateAdminControllerTest extends AbstractHttpControllerTestCase
     public function testexportTranslate()
     {
         $content = '';
-        $translates = array("Impress" => "Mentions légales");
-
+       
         $ts = new \PlaygroundTranslate\Service\Translate();
 
+        $translates = array("Impress" => "Mentions légales");
         $content = $ts->convertArrayToCSV($translates);
         $this->assertEquals('Impress;Mentions légales
+',$content);
+
+         $translates = array("Impress" => "Odtlačok");
+        $content = $ts->convertArrayToCSV($translates);
+        $this->assertEquals('Impress;Odtlačok
+',$content);
+
+         $translates = array("Impress" => "版本說明 Bǎnběn shuōmíng");
+        $content = $ts->convertArrayToCSV($translates);
+        $this->assertEquals('Impress;版本說明 Bǎnběn shuōmíng
 ',$content);
 
     }
