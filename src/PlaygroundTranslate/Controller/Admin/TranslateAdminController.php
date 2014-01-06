@@ -163,9 +163,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     public function exportTranslate($translates, $data)
     {
         $content = '';
-        foreach ($translates as $key => $value) {
-            $content .= $key.';'.$value."\n";
-        }
+        $content = $this->getTranslateService()->convertArrayToCSV($translates);
 
         $response = new Response();
         $response->setStatusCode(Response::STATUS_CODE_200);

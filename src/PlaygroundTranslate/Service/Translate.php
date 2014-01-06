@@ -165,6 +165,23 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
+    * convertArrayToCSV : convertit un tableau en CSV
+    * @param array $translates tableau de traduction
+    * 
+    * @return string $content contenu des traduction au format csv
+    */
+    public function convertArrayToCSV($translates)
+    {
+        $content = '';
+
+        foreach ($translates as $key => $value) {
+            $content .= $key.';'.$value."\n";
+        }
+        
+        return $content;
+    }
+
+    /**
     * getHistory : Permet de recuperer les historiques de traductions
     * @param array $historicals tableau de d'historique de traductions
     * @param string $key clé de locale 
