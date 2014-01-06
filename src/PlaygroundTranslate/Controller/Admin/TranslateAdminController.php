@@ -163,16 +163,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     public function exportTranslate($translates, $data)
     {
         $content = '';
-        foreach ($translates as $key => $value) {
-            $content .= $key.';'.$value."\n";
-        }
-
-        // Excel SYLK-Bug
-        // http://support.microsoft.com/kb/323626/fr
-        $content = preg_replace('/^ID/', 'id', $content);
-        $content = utf8_decode($content);
-        $intLength = mb_strlen($content, 'utf-8');
-
+        $content = $this->getTranslateService()->convertArrayToCSV($translates);
 
         $response = new Response();
         $response->setStatusCode(Response::STATUS_CODE_200);
