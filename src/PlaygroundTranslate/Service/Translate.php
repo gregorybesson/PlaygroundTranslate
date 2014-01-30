@@ -40,6 +40,21 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
     }
 
+    public function uploadExcel($data)
+    {
+        $objPHPExcel = \PHPExcel_IOFactory::load($data['uploadTranslateExcel']['tmp_name']);
+        $content = array();
+        for ($i=1; $i <= $objPHPExcel->getActiveSheet()->getHighestRow(); $i++) { 
+            $content[$objPHPExcel->getActiveSheet()->getCell('A'.$i)->getValue()] = $objPHPExcel->getActiveSheet()->getCell('B'.$i)->getValue();
+        }
+        $return = $this->writeFile($data['locale'], $content, 'excel');
+        if($return === false){
+            return false;
+        }
+
+        return $this->activeTranslate($data['locale']);
+    }
+
     /**
     * readCSV : Lire un fichier CSV et le formater dans un tableau php
     * @param array $data file upload form

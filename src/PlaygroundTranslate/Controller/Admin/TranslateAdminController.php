@@ -66,7 +66,16 @@ class TranslateAdminController extends AbstractActionController implements Servi
                 $return  = $this->getTranslateService()->export($data);
                 return $this->exportTranslate($return, $data);
             }else{
-                $return  = $this->getTranslateService()->upload($data);   
+                if(!empty($data['uploadTranslateExcel']) && $data['uploadTranslateExcel']['name'] != ''){
+                    $return  = $this->getTranslateService()->uploadExcel($data);   
+                }
+                if(!empty($data['uploadTranslate']) && $data['uploadTranslate']['name'] != ''){
+                    $return  = $this->getTranslateService()->upload($data);     
+                }
+                if(!empty($data['exportexcel'])){
+                    $return  = $this->getTranslateService()->export($data);    
+                    return $this->exportTranslateExcel($return, $data); 
+                }
             }
 
             
@@ -174,6 +183,38 @@ class TranslateAdminController extends AbstractActionController implements Servi
             ->addHeaderLine('Accept-Ranges', 'bytes')
             ->addHeaderLine('Content-Length', strlen($content));
 
+        $response->setContent($content);
+        return $response;
+    }
+
+    public function exportTranslateExcel($translates, $data)
+    {
+        $content = "";
+        $response = new Response();
+        $response->setStatusCode(Response::STATUS_CODE_200);
+
+        $response->getHeaders()
+            ->addHeaderLine('Content-Type', 'application/vnd.ms-excel')
+            ->addHeaderLine('Content-Disposition', "attachment; filename=".$data['locale'] . "-export.xls")
+            ->addHeaderLine('Accept-Ranges', 'bytes')
+            ->addHeaderLine('Cache-Control', 'max-age=0')
+            ->addHeaderLine('Accept-Ranges', 'max-age=1')
+            ->addHeaderLine('Cache-Control', 'cache, must-revalidate');
+
+        $content = '
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"> 
+            <head> 
+            <title>Planification Connect</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+            </head>
+            <body><table>';
+
+            foreach ($translates as $key => $value) {
+                $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td></tr>";
+            }
+
+        $content.="</table></body>";
         $response->setContent($content);
         return $response;
     }
