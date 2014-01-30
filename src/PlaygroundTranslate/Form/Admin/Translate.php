@@ -47,6 +47,17 @@ class Translate extends ProvidesEventsForm
             ),
         ));
 
+         $this->add(array(
+            'name' => 'uploadTranslateExcel',
+            'attributes' => array(
+                'type'  => 'file',
+            ),
+            'options' => array(
+                'label' => $translator->translate('import translate', 'playgroundtranslate'),
+            ),
+        ));
+
+
         $this->add(array(
             'name' => 'translate',
             'type'  => 'Zend\Form\Element\Hidden',
