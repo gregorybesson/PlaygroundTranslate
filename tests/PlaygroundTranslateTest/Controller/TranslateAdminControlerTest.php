@@ -4,8 +4,7 @@ namespace PlaygroundTranslateTest\Controller;
 
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-use PlaygroundDesignTest\Bootstrap;
-use PlaygroundDesign\Entity\Company as CompanyEntity;
+use PlaygroundTranslateTest\Bootstrap;
 
 class TranslateAdminControllerTest extends AbstractHttpControllerTestCase
 {
