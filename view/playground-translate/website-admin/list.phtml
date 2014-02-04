@@ -1,0 +1,65 @@
+<?php $this->plugin('translate')->setTranslatorTextDomain('playgroundtranslate'); ?>
+<?php $associatedUserCountry = $this->associatedUsersCountry(); ?>
+<h1 class="f-left"><?php echo $this->translate('Website Country list'); ?></h1>
+
+<div class="row siteCountries">
+
+<?php foreach ($websites as $siteCountry): ?>
+
+	<div class="col-md-4">
+		<div class="country-box margin-left10 margin-right10" >
+			<div class='pull-left margin-left10 sitecountry'>
+				<a data-toggle="modal" href="#model_<?php echo $siteCountry->getId(); ?>"><?php echo $this->translate($siteCountry->getName()); ?> (<?php echo "T".$siteCountry->getPhase() ?>)</a>
+			</div>
+		
+			<div class="pull-right margin-right10 make-switch" data-on="success" data-off="danger" onclick="window.location='<?php echo $this->url('admin/website/edit-active', array("websiteId" => $siteCountry->getId())) ?>'">
+			    <input type="checkbox" <?php if($siteCountry->getActive()) : ?>checked<?php endif ?>>
+			</div>
+
+			<div class="clearfix"></div>
+		</div>
+		
+
+		<div class="modal fade" id="model_<?php echo $siteCountry->getId(); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel"><?php echo $this->translate('Country Informations'); ?> : <?php echo $siteCountry->getName() ?> </h4>
+					</div>
+					<div class="modal-body">
+						<h3><?php echo $this->translate('Associated Country - Locale'); ?></h3>
+						<div class="row siteCountryLocale">
+						<?php foreach ($locales as $locale): $associated = false; ?>
+			            	<?php foreach ($siteCountry->getLocales() as $localeAssociated): ?>
+			            		<?php if($localeAssociated->getLocale() == $locale->getLocale()) : $associated = true; break; endif ?>
+			            	<?php endforeach ?>
+			            	<div class="col-md-4">
+			            		<div class="checkbox">
+									<label>
+										<input type="checkbox" disabled <?php if($associated) : ?>checked<?php endif ?> > 
+										<?php echo $this->translate($locale->getName()); ?>
+										<span><img src="<?php echo $locale->getFlag() ?>.png" alt="<?php echo $this->translate($locale->getName()); ?>"/></span>
+									</label>
+								</div>
+							</div>
+		            	<?php endforeach ?>
+		            	</div>
+		            	<h3><?php echo $this->translate('Administrators'); ?></h3>
+						<ul class="list-unstyled">
+							<?php if(!empty($associatedUserCountry[$siteCountry->getId()])) : ?>
+								<?php foreach ($associatedUserCountry[$siteCountry->getId()] as $user): ?>
+			            			<li><?php echo $user; ?><br /></li>
+			            		<?php endforeach ?>
+		            		<?php endif; ?>
+		            	</ul>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default pull-right" data-dismiss="modal"><?php echo $this->translate('Close');?></button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+	</div>
+<?php endforeach; ?>
+</div>
