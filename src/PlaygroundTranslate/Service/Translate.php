@@ -46,7 +46,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $content = array();
         for ($i=1; $i <= $objPHPExcel->getActiveSheet()->getHighestRow(); $i++) { 
             $value = $objPHPExcel->getActiveSheet()->getCell('B'.$i)->getValue();
-            if($value == "/|/") {
+            if($value == "translate empty value") {
                 $value = " ";
             }
             $content[$objPHPExcel->getActiveSheet()->getCell('A'.$i)->getValue()] = $value;

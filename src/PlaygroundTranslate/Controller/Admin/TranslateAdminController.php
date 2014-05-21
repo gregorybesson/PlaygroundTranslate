@@ -213,7 +213,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
             foreach ($translates as $key => $value) {
                 $value = htmlspecialchars($value);
                 if ($value == " ") {
-                    $value = "/|/";
+                    $value = "translate empty value";
                 }
                 $content .="<tr><td>".htmlspecialchars($key)."</td><td>".$value."</td></tr>";
             }
