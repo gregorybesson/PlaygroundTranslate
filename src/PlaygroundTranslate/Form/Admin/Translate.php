@@ -4,7 +4,7 @@ namespace PlaygroundTranslate\Form\Admin;
 
 use Zend\Form\Element;
 use ZfcBase\Form\ProvidesEventsForm;
-use Zend\I18n\Translator\Translator;
+use Zend\Mvc\I18n\Translator;
 use Zend\ServiceManager\ServiceManager;
 
 class Translate extends ProvidesEventsForm
