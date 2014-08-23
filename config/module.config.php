@@ -1,6 +1,28 @@
 <?php
 return array(
+    'bjyauthorize' => array(
     
+        'resource_providers' => array(
+            'BjyAuthorize\Provider\Resource\Config' => array(
+                'translate'     => array(),
+            ),
+        ),
+    
+        'rule_providers' => array(
+            'BjyAuthorize\Provider\Rule\Config' => array(
+                'allow' => array(
+                    array(array('admin'), 'translate',      array('list')),
+                ),
+            ),
+        ),
+    
+        'guards' => array(
+            'BjyAuthorize\Guard\Controller' => array(
+                // Admin area
+                array('controller' => 'PlaygroundTranslate\Controller\Admin\TranslateAdmin',    'roles' => array('admin')),
+            ),
+        ),
+    ),
     'translator' => array(
         'locale' => 'fr_FR',
         'translation_file_patterns' => array(
