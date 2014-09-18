@@ -45,7 +45,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $objPHPExcel = \PHPExcel_IOFactory::load($data['uploadTranslateExcel']['tmp_name']);
         $content = array();
         for ($i=1; $i <= $objPHPExcel->getActiveSheet()->getHighestRow(); $i++) { 
-            $content[$objPHPExcel->getActiveSheet()->getCell('A'.$i)->getValue()] = $objPHPExcel->getActiveSheet()->getCell('B'.$i)->getValue();
+            $value = $objPHPExcel->getActiveSheet()->getCell('B'.$i)->getValue();
+            if($value == "translate empty value") {
+                $value = " ";
+            }
+            $content[$objPHPExcel->getActiveSheet()->getCell('A'.$i)->getValue()] = $value;
         }
         $return = $this->writeFile($data['locale'], $content, 'excel');
         if($return === false){
@@ -220,7 +224,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         return $historicals;
     }
-
 
     /**
      * Retrieve service manager instance
