@@ -42,6 +42,10 @@ class TranslateAdminController extends AbstractActionController implements Servi
     */
     public function indexAction()
     {
+
+        $this->getTranslateService()->buildTree();
+
+
         $user = $this->zfcUserAuthentication()->getIdentity();
         $locales = $this->getLocaleService()->getLocaleMapper()->findBy(array('active_front' => 1));
 
@@ -91,8 +95,44 @@ class TranslateAdminController extends AbstractActionController implements Servi
         $viewModel = new ViewModel();
 
         $translates = $this->getTranslateService()->readLanguagesFiles();
+        
+        $arborescence = $this->getTranslateService()->getArborescence();
+
+        // Gestion de la branche
+        if($this->getRequest()->getQuery('controller')) {
+            $branch = $arborescence[
+                    $this->getRequest()->getQuery('controller', key($arborescence))
+                ][
+                    $this->getRequest()->getQuery('action', key(current($arborescence)))
+                ];
+        }
+        else {
+            $branch = false;
+
+            // On recupere toutes les clées du parsing
+            $allKeys = array();
+            foreach ($arborescence as $controller => $actions) {
+                foreach ($actions as $action => $datas) {
+                    $allKeys = array_merge($allKeys, $datas['keys']);
+                }
+            }
+            $allKeysInKey = array();
+            foreach ($allKeys as $key) {
+                $allKeysInKey[$key] = "";
+            }
+            // On ajoute les clées de traductions vides trouvées par le parsing
+            foreach ($locales as $key => $locale) {
+                $translates[$locale->getLocale()] = array_merge($allKeysInKey, $translates[$locale->getLocale()]);
+            }
+        }
+
+        $historicals = $this->getHistoryTranslate($localesForm);
+        krsort($historicals);
+
+        $locale = $this->getRequest()->getQuery('locale', key($localesForm));
+
         $keys = array();
-        foreach ($translates as $locale => $translate) {
+        foreach ($translates as $translate) {
             if(is_array($translate)){
                 foreach (array_keys($translate) as $value) {
                     if(empty($keys[$value])) {
@@ -102,16 +142,16 @@ class TranslateAdminController extends AbstractActionController implements Servi
             }
         }
 
-        $historicals = $this->getHistoryTranslate($localesForm);
-        krsort($historicals);
-
         return $viewModel->setVariables(array('form' => $form, 
                                               'locales' => $locales,
                                               'user' => $user,
                                               'translates' => $translates,
                                               'keys' => $keys,
                                               'localesForm' => $localesForm,
-                                              'historicals' => $historicals));
+                                              'historicals' => $historicals,
+                                              'arborescence' => $arborescence,
+                                              'branch' => $branch,
+                                              'locale' => $locale));
     }
 
     /**
@@ -193,6 +233,16 @@ class TranslateAdminController extends AbstractActionController implements Servi
         $response = new Response();
         $response->setStatusCode(Response::STATUS_CODE_200);
 
+        $arborescence = $this->getTranslateService()->getArborescence();
+        $keys = array();
+        foreach ($arborescence as $controller => $branch) {
+            foreach ($branch as $action => $datas) {
+                foreach ($datas['keys'] as $key) {
+                    $keys[$key] = $controllerName = end(explode('\\', $controller)).'-'.$action;
+                }
+            }
+        }
+
         $response->getHeaders()
             ->addHeaderLine('Content-Type', 'application/vnd.ms-excel')
             ->addHeaderLine('Content-Disposition', "attachment; filename=".$data['locale'] . "-export.xls")
@@ -211,7 +261,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
             <body><table>';
 
             foreach ($translates as $key => $value) {
-                $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td></tr>";
+                $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td><td>".htmlspecialchars($keys[$key])."</td></tr>";
             }
 
         $content.="</table></body>";

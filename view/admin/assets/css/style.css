@@ -1,0 +1,9 @@
+#translate-iframe {
+    width: 100%;
+    height: 800px;
+    border: none;
+}
+
+.allWidth {
+    max-width: 100%;
+}

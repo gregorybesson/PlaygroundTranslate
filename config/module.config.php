@@ -106,4 +106,39 @@ return array(
             ),
         ),
     ),
+    'assetic_configuration' => array(
+        'modules' => array(
+            'playground_translate' => array(
+                # module root path for your css and js files
+                'root_path' => array(
+                        __DIR__ . '/../view/admin/assets',
+                ),
+                # collection of assets
+                'collections' => array(
+                    'admin_translate_css' => array(
+                        'assets' => array(
+                            'style.css' => 'css/style.css',
+                        ),
+                        'options' => array(
+                            'output' => 'zfcadmin/css/translate.css',
+                        )
+                    ),
+                    'admin_translate_js' => array(
+                        'assets' => array(
+                            'script.js' => 'js/script.js',
+                        ),
+                        'options' => array(
+                            'output' => 'zfcadmin/js/translate.js',
+                        )
+                    ),
+                ),
+            ),
+        ),
+        'routes' => array(
+            'admin.*' => array(
+                '@admin_translate_css'     => '@admin_translate_css',
+                '@admin_translate_js'     => '@admin_translate_js',
+            ),
+        ),
+    ),
 );

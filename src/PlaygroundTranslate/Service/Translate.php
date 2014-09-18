@@ -92,6 +92,13 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     */
     public function writeFile($locale, $content, $context = null)
     {
+        // On recupère toutes les traductions
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+        $data = include(__DIR__.$pathTranslate.$locale.'.php');
+        // On ajoute les nouvelles
+        $content = array_merge($data, $content);
+
         $translate = "";
         foreach ($content as $key => $value) {
             $translate .= '    "'.$key.'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
@@ -150,6 +157,240 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $translates;
     }
 
+    public function getArborescence() {
+        /*$path = __DIR__.$this->getServiceManager()->get('playgroundtranslate_module_options')->getLanguagePath().'categories/';
+        $arbo = array();
+        foreach (glob($path.'*') as $file) {
+            $factoredName = explode("__", $file);
+            $content = json_decode(file_get_contents($file), true);
+            $arbo[str_replace("_", "\\", str_replace(__DIR__.$this->getServiceManager()->get('playgroundtranslate_module_options')->getLanguagePath().'categories/', "", $factoredName[0]))][str_replace(".json", "", $factoredName[1])] = $content;
+        }
+        return $arbo;*/
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+        $path = __DIR__.$pathTranslate.'categories/';
+
+        $arbo = array();
+        foreach (glob($path.'*') as $folder) {
+            foreach (glob($folder.'/*') as $file) {
+                $content = json_decode(file_get_contents($file), true);
+                $arbo[$content['controller']][$content['action']] = $content;
+            }
+            
+        }
+        return $arbo;
+    }
+
+    public function parseTemplate($template)
+    {
+        $raw = file_get_contents($template);
+        //$matches = array();
+        //$content = preg_match_all('#\$this->translate\([\'\"]([^\)]*)[\'\"]\)#i', $raw, $matches);
+        $tabs = preg_split('#\$this->translate\(#i', $raw);
+        $keys = array();
+        foreach ($tabs as $key => $value) {
+            $split = str_split($value);
+            $cpt = 1;
+            $key = '';
+            foreach ($split as $car) {
+                if($car == '(') {
+                    $cpt ++;
+                }
+                elseif($car == ')') {
+                    $cpt --;
+                }
+
+                if($cpt==0) {
+                    $keys[] = trim(trim($key, '\''), '\"');
+                    break;
+                }
+                else {
+                    $key .= $car;
+                }
+            }
+        }
+        return $keys;
+    }
+
+    public function buildTree()
+    {
+        // layout
+        $this->parseLayout($this->getServiceManager()->get('Config')['core_layout']['frontend']['layout']);
+
+        // templates
+        $routes = $this->getServiceManager()->get('Config')['router']['routes'];
+        foreach ($routes as $key => $route) {
+            $this->buildTreeRecursive(1, $key, $route, "");
+        }
+    }
+
+    public function parseLayout($layout) {
+        $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+        $pathTranslate = $options->getLanguagePath();
+
+        $design = implode('/', $this->getServiceManager()->get('Config')['design']['frontend']);
+
+        $template = __DIR__.'/../../../../../../design/frontend/' . $design .'/'.$layout;
+
+        $keys = $this->parseTemplate($template);
+        $path = __DIR__.$pathTranslate.'categories/';
+        if(!file_exists($path)) {
+            mkdir($path, true);
+        }
+        $data = array(
+            'keys' => array_unique($keys), // On enleve les doublons
+            'layout' => $layout,
+            'template' => $template,
+        );
+        file_put_contents($path.'/layout.json', json_encode($data));
+    }
+
+    public function buildTreeRecursive($row, $key, $route, $url)
+    {
+        
+        switch ($route['type']) {
+            case 'Literal':
+            case 'segment':
+            case 'Segment':
+            case 'Zend\Mvc\Router\Http\Literal':
+                $uri = $route['options']['route'];
+                
+                break;
+
+            case 'PlaygroundCore\Mvc\Router\Http\RegexSlash':
+                $uri = $route['options']['regex'];
+                
+                break;
+            
+            default:
+                $uri = '';
+                
+                break;
+        }
+        if(array_key_exists('defaults', $route['options'])) {
+            $controller = $route['options']['defaults']['controller'];
+            $action = $route['options']['defaults']['action'];
+        } else {
+            $controller = false;
+            $action = false;
+        }
+
+
+        $string = '';
+        for ($cpt=0; $cpt <= $row; $cpt++) {
+            $string .= '|&nbsp;&nbsp;&nbsp;&nbsp;';
+        }
+
+
+        if($controller) {
+            // Gestion du package
+            $package = current(array_filter(explode('/', $url)));
+            if(empty($package)) {
+                $package = "frontend";
+            }
+            if(!empty($package) && array_key_exists($package, $this->getServiceManager()->get('Config')['design'])) {
+                $design = implode('/', $this->getServiceManager()->get('Config')['design'][$package]);
+            } else {
+                $design = implode('/', $this->getServiceManager()->get('Config')['design']['frontend']);
+            }
+
+            $explodeController = explode('\\', $this->_reverseAlias(str_replace(['Controller', 'controller'], "", $controller)));
+            $template = __DIR__.'/../../../../../../design/' . $package . '/' . $design .'/'. $this->_getFileName(current($explodeController)) . '/' . $this->_getFileName(end($explodeController)) . '/' . $this->_getFileName($action) . '.phtml';
+        } else {
+            $template = "";
+        }
+
+        if(file_exists($template)) {
+            $found = "FOUND";
+            
+            // Parsing du template
+            $keys = $this->parseTemplate($template);
+
+            $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
+            $pathTranslate = $options->getLanguagePath();
+
+            $path = __DIR__.$pathTranslate.'categories/'.str_replace("\\", "", $controller);
+            if(!file_exists($path)) {
+                mkdir($path, true);
+            }
+            $data = array(
+                'keys' => array_unique($keys), // On enleve les doublons
+                'url' => trim($url."/".$key, '/'),
+                'type' => $route['type'],
+                'controller' => $controller,
+                'action' => $action,
+                'template' => $template,
+            );
+            file_put_contents($path.'/'.$action.'.json', json_encode($data));
+
+        } else {
+            $found = "NOT FOUND";
+        }
+        
+        //echo $string.'- '.$key.' ('.trim($url."/".$key, '/').')['. $controller.'::'.$action .'()] => '. $found .' [' . /*$template .*/ '] <br />';
+
+
+
+        if(is_array($route) && array_key_exists('child_routes', $route)) {
+            foreach ($route['child_routes'] as $childKey => $childRoute) {
+                $this->buildTreeRecursive($row + 1, $childKey, $childRoute, $url."/".$key);
+            }
+        }
+    }
+
+    /*
+        Retourne le nom du controller a partir de son alias
+    */
+    protected function _reverseAlias($alias) {
+        $aliases = $this->getServiceManager()->get('Config')['controllers']['invokables'];
+        if(array_key_exists($alias, $aliases)) {
+            return $aliases[$alias];
+        }
+        return $alias;
+    }
+
+    /*
+        factory pour passe de "JeSuisUnBG" à "je-suis-un-bg"
+    */
+    protected function _getFileName($file) {
+        $return = "";
+        $last = true; // Gestion des majuscules qui se suivent (on ne met pas de '-') et de la premiere majuscule
+        foreach(str_split($file) as $car) {
+            if(!$last && ord($car) >= 65 && ord($car) <= 90) {
+                $return .= "-" . strtolower($car);
+                $last = true;
+            } else {
+                $return .= strtolower($car);
+                $last = false;
+            }
+        }
+        return $return;
+    } 
+    /*public function buildTreeRecursive($row, $key, $routePart) {
+        $string = '';
+        for ($cpt=0; $cpt <= $row; $cpt++) { 
+            $string .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+        }
+        echo $string.$key.'<br />';
+        //var_dump($routePart);
+        if(method_exists($routePart, 'getRoutes')) {
+            $childs = $routePart->getRoutes();
+            foreach ($childs as $key => $route) {
+                //var_dump($route->getPrototype());
+                //var_dump($route->getRoutes()->toArray());
+                $this->buildTreeRecursive($row + 1, $key, $route);
+            }
+        }
+        if(method_exists($routePart, 'getChildRoutes')) {
+            $childs = $routePart->getChildRoutes();
+            foreach ($childs as $key => $route) {
+                //var_dump($route->getPrototype());
+                //var_dump($route->getRoutes()->toArray());
+                $this->buildTreeRecursive($row + 1, $key, $route);
+            }
+        }
+    }*/
+
     /**
     * readLanguageFile : Permet de lire un fichier de traductions en fonction de la locale
     * @param string $locale : locale 
@@ -172,10 +413,26 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $translates = array();
 
+        $arborescence = $this->getArborescence();
+
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
 
         $translates = @include __DIR__.$pathTranslate.$data['locale'].'.php';
+
+        // On recupere toutes les clées du parsing
+        $allKeys = array();
+        foreach ($arborescence as $controller => $actions) {
+            foreach ($actions as $action => $datas) {
+                $allKeys = array_merge($allKeys, $datas['keys']);
+            }
+        }
+        $allKeysInKey = array();
+        foreach ($allKeys as $key) {
+            $allKeysInKey[$key] = "";
+        }
+        // On ajoute les clées de traductions vides trouvées par le parsing
+        $translates = array_merge($allKeysInKey, $translates);
         return $translates;
     }
 

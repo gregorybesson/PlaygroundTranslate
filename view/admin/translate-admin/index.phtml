@@ -1,0 +1,251 @@
+<?php
+    $this->plugin('translate')->setTranslatorTextDomain('ds');
+    $user = $this->user;
+    $locales = $this->locales;
+    $translates = $this->translates;
+
+    $form = $this->form;
+    $form->prepare();
+
+    if($user->getRole()->getRoleId() == "c_admin") {
+        $locales = array();
+        foreach ($user->getWebsites() as $siteCountry) {
+            foreach ($siteCountry->getLocales() as $localesByCountry) {
+                $locales[] = $localesByCountry;
+            }
+        }
+    
+        $localesForm = array();
+        foreach ($locales as $key => $locale) {
+            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
+        }
+        $form->get('locale')->setValueOptions($localesForm);
+
+        foreach (array_keys($translates) as $locale) {
+            if(!array_key_exists($locale, $localesForm)){
+                unset($translates[$locale]);
+            }
+        }
+    } else {
+        foreach ($locales as $key => $locale) {
+            $localesForm[$locale->getLocale()] = $locale->getName(). " (".$locale->getLocale().")";
+        }
+        $form->get('locale')->setValueOptions($localesForm);
+    }
+    $form->get('submit')->setLabel($this->translate('validate'));
+?>
+
+<ol class="breadcrumb">
+    <li><a href="<?php echo $this->url('admin'); ?>"><?php echo $this->translate('Home'); ?></a></li> 
+    <li class="active"><?php echo $this->translate('Translate'); ?></li>
+</ol>
+
+<div class="row translate">
+    <div class="col-md-9">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"><?php echo $this->translate('upload translate'); ?></h3>
+            </div>
+            <div class="panel-body">
+                <?php echo $this->form()->openTag($form);  ?>
+                 <div class="form-group">
+                    <?php echo $this->formLabel($form->get('uploadTranslateExcel')); ?>
+                    <?php echo $this->formFile($form->get('uploadTranslateExcel')->setAttribute('class', 'form-control')); ?>
+                </div>
+               <!-- <div class="form-group">
+                    <?php echo $this->formLabel($form->get('uploadTranslate')); ?>
+                    <?php echo $this->formFile($form->get('uploadTranslate')->setAttribute('class', 'form-control')); ?>
+                </div>-->
+                <div class="form-group">
+                    <?php echo $this->formLabel($form->get('locale')); ?>
+                    <?php echo $this->formSelect($form->get('locale')->setAttribute('class', 'form-control')); ?>
+                </div>
+                <div class='pull-right margin-right30'>
+                    <?php echo $this->formButton($form->get('submit')->setAttribute('class', 'btn btn-success')->setLabelOptions(array('disable_html_escape' => true))) ?>
+                </div>
+                <?php echo $this->form()->closeTag(); ?>
+            </div>
+        </div>
+        <!-- ANCIEN EMPLACEMENT GRILLE TRAD -->
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-warning">
+             <div class="panel-heading">
+                <h3 class="panel-title"><?php echo $this->translate('export translate'); ?></h3>
+            </div>
+            <div class="panel-body">
+            <?php echo $this->form()->openTag($form);  ?>
+                <input type='hidden' name='exportexcel' value='1' />
+                <div class="form-group">
+                    <?php echo $this->formLabel($form->get('locale')); ?>
+                    <?php echo $this->formSelect($form->get('locale')->setAttribute('class', 'form-control')); ?>
+                    </div>
+                <div class='pull-right margin-right30'>
+                    <?php echo $this->formButton($form->get('submit')->setAttribute('class', 'btn btn-success')) ?>
+                </div>
+            <?php echo $this->form()->closeTag(); ?>
+            </div>
+        </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title"><?php echo $this->translate('history'); ?></h3>
+            </div>
+            <div class="panel-body hidden">
+                <div class="list-group">
+                    <?php foreach ($this->historicals as $historical) : ?>
+                        <?php if(in_array($historical['locale'], array_keys($localesForm))): ?>
+                            <a href="#" class="list-group-item">
+                                <p class="list-group-item-text">
+                                <?php echo $this->translate('New import of translate'); ?>  <?php echo $this->translate($this->localesForm[$historical['locale']]); ?>
+                                </p>
+                                <p class="list-group-item-text">
+                                    <strong>
+                                    <?php $date = $historical['datetime']; ?>
+                                    <?php $dateFormat = $this->translate('date_format'); ?>
+                                    <?php if(strpos('H:i:s', $dateFormat) === false) : ?>
+                                        <?php $dateFormat = 'H:i:s d/m/Y'; ?>
+                                    <?php endif; ?>
+                                    <?php echo $date->format($dateFormat); ?>
+                                    </strong>
+                                </p>
+                                
+                            </a>
+                        <?php endif; ?>
+                  <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <?php if($user->getRole()->getRoleId() == "c_admin" && (count(array_keys($translates))) <= 2 )  : ?>
+        <hr />
+<?php if($this->branch) : ?>
+</div>
+<div class="container allWidth">
+    <div class="row">
+        <div class="col-md-4">
+<?php endif; ?>
+            <form action="/admin/translate/update" method="post">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h3 class="panel-title"><?php echo $this->translate('update translate'); ?></h3>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="right form-control" id="arbo-select">
+                                    <option data-lang="<?php echo $this->locale ?>" data-controller="" data-action="" <?php if($this->branch) : ?>selected="selected"<?php endif; ?>><?php echo $this->translate('Toutes les traductions') ?></option>
+                                    <?php foreach ($arborescence as $controller => $actions): ?>
+                                        <?php foreach ($actions as $action => $keysByAction): ?>
+
+                                            <?php 
+                                                $controllerName = explode('\\', $controller);
+                                                $controllerName = end($controllerName);
+                                            ?>
+                                            <option data-lang="<?php echo $this->locale ?>" data-controller="<?php echo $controller ?>" data-action="<?php echo $action ?>" value="<?php echo $controller.'::'.$action ?>" <?php if($this->branch && $controller == $this->branch['controller'] && $action == $this->branch['action']) : ?>selected="selected"<?php endif; ?>><?php echo $controllerName.', '.$action ?></option>
+                                        <?php endforeach ?>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <?php
+                        if($this->branch) {
+                            $percentByLocale = array();
+                            foreach (array_keys($translates) as $locale) {
+                                $found = 0;
+                                foreach($this->branch['keys'] as $key) {
+                                    if(array_key_exists($key, $translates[$locale]) && !empty($translates[$locale][$key])) {
+                                        $found++;
+                                    }
+                                }
+                                if(count($this->branch['keys']) > 0) {
+                                    $percentByLocale[$locale] = round($found / count($this->branch['keys']) * 100);
+                                } else {
+                                    $percentByLocale[$locale] = 100;
+                                }
+                            }
+                        }
+
+                        ?>
+
+                        <div class='pull-right margin-right30'>
+                            <?php echo $this->formButton($form->get('submit')->setAttribute('class', 'btn btn-success')) ?>
+                        </div>
+                        <div class="clearfix"></div>
+                        
+                        <table class="table" id="translate-keys">
+                            <thead>
+                                <tr>
+                                    <td>clé </td>
+                                    <?php foreach (array_keys($translates) as $locale) : ?>
+                                         <td><?php echo $locale; ?><?php if(isset($percentByLocale)) : ?> (<?php echo $percentByLocale[$locale] ?> %)<?php endif; ?></td>
+                                    <?php endforeach ; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if($this->branch) {
+                                    $boucleData = $this->branch['keys'];
+                                }
+                                else {
+                                    $boucleData = $keys;
+                                }
+
+                                ?>
+                                <?php foreach($boucleData as $key) : ?>
+                                    <tr data-key="<?php echo htmlentities($key); ?>">
+                                        <td> <?php echo htmlentities($key); ?></td>
+                                        <?php foreach (array_keys($translates) as $locale) : ?>
+                                            <td>
+                                                <textarea class="form-control" rows="3" name="translate[<?php echo $locale ?>][<?php echo $key ?>]"><?php echo !empty($translates[$locale][$key])?$translates[$locale][$key]:''; ?></textarea>  
+                                                <input type="hidden" value="<?php echo !empty($translates[$locale][$key])?$translates[$locale][$key]:$key; ?>"/>
+                                            </td>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                <?php endforeach ; ?>
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+            </form>
+<?php if($this->branch) : ?>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h3 class="panel-title"><?php echo $this->translate('View'); ?></h3>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="right form-control" id="lang-select">
+                                <?php foreach (array_keys($translates) as $locale): ?>
+                                        <option data-lang="<?php echo $locale ?>" data-controller="<?php echo ($this->branch) ? $this->branch['controller']: ''; ?>" data-action="<?php echo ($this->branch) ? $this->branch['action']: ''; ?>" value="<?php echo $locale ?>" <?php if($locale == $this->locale) : ?>selected="selected"<?php endif; ?>><?php echo $locale ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <?php if($this->branch&& $branch['type'] == 'PlaygroundCore\Mvc\Router\Http\RegexSlash') : ?>
+                    <?php 
+                        $ex = explode('\\', $branch['controller']);
+                        $controller = end($ex);
+                        $options = array(
+                            'page' => strtolower($controller),
+                            'subpage' => strtolower($branch['action'])
+                        );
+                    ?>
+                    <iframe id="translate-iframe" src="/<?php echo current(explode('_', $this->locale)) ?><?php echo $this->url($branch['url'], $options) ?>"></iframe>
+                <?php elseif($this->branch): ?>
+                    <iframe id="translate-iframe" src="<?php echo $this->url($branch['url']) ?>"></iframe>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+<?php endif; ?>
+<?php endif; ?>

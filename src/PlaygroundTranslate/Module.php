@@ -79,4 +79,20 @@ class Module
             ),
         );
     }
+
+    public function getViewHelperConfig()
+    {
+        return array(
+            'factories' => array(
+                'translate' => function ($sm) {
+                    $viewHelper = new View\Helper\Translate();/*
+                    $viewHelper->setOptions($sm->getServiceLocator()->get('playgroundtranslate_module_options'));
+                    $viewHelper->setRequest($sm->getServiceLocator()->get('request'));
+                    $viewHelper->setMvcEvent($sm->getServiceLocator()->get('application')->getMvcEvent());*/
+                    return $viewHelper;
+                },
+            )
+        );
+
+    }
 }
