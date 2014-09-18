@@ -158,14 +158,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     }
 
     public function getArborescence() {
-        /*$path = __DIR__.$this->getServiceManager()->get('playgroundtranslate_module_options')->getLanguagePath().'categories/';
-        $arbo = array();
-        foreach (glob($path.'*') as $file) {
-            $factoredName = explode("__", $file);
-            $content = json_decode(file_get_contents($file), true);
-            $arbo[str_replace("_", "\\", str_replace(__DIR__.$this->getServiceManager()->get('playgroundtranslate_module_options')->getLanguagePath().'categories/', "", $factoredName[0]))][str_replace(".json", "", $factoredName[1])] = $content;
-        }
-        return $arbo;*/
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
         $path = __DIR__.$pathTranslate.'categories/';
@@ -184,8 +176,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     public function parseTemplate($template)
     {
         $raw = file_get_contents($template);
-        //$matches = array();
-        //$content = preg_match_all('#\$this->translate\([\'\"]([^\)]*)[\'\"]\)#i', $raw, $matches);
         $tabs = preg_split('#\$this->translate\(#i', $raw);
         $keys = array();
         foreach ($tabs as $key => $value) {
@@ -301,7 +291,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         }
 
         if(file_exists($template)) {
-            $found = "FOUND";
             
             // Parsing du template
             $keys = $this->parseTemplate($template);
@@ -323,13 +312,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             );
             file_put_contents($path.'/'.$action.'.json', json_encode($data));
 
-        } else {
-            $found = "NOT FOUND";
         }
-        
-        //echo $string.'- '.$key.' ('.trim($url."/".$key, '/').')['. $controller.'::'.$action .'()] => '. $found .' [' . /*$template .*/ '] <br />';
-
-
 
         if(is_array($route) && array_key_exists('child_routes', $route)) {
             foreach ($route['child_routes'] as $childKey => $childRoute) {
@@ -366,30 +349,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         }
         return $return;
     } 
-    /*public function buildTreeRecursive($row, $key, $routePart) {
-        $string = '';
-        for ($cpt=0; $cpt <= $row; $cpt++) { 
-            $string .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-        }
-        echo $string.$key.'<br />';
-        //var_dump($routePart);
-        if(method_exists($routePart, 'getRoutes')) {
-            $childs = $routePart->getRoutes();
-            foreach ($childs as $key => $route) {
-                //var_dump($route->getPrototype());
-                //var_dump($route->getRoutes()->toArray());
-                $this->buildTreeRecursive($row + 1, $key, $route);
-            }
-        }
-        if(method_exists($routePart, 'getChildRoutes')) {
-            $childs = $routePart->getChildRoutes();
-            foreach ($childs as $key => $route) {
-                //var_dump($route->getPrototype());
-                //var_dump($route->getRoutes()->toArray());
-                $this->buildTreeRecursive($row + 1, $key, $route);
-            }
-        }
-    }*/
 
     /**
     * readLanguageFile : Permet de lire un fichier de traductions en fonction de la locale
