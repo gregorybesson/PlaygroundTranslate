@@ -191,7 +191,9 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 }
 
                 if($cpt==0) {
-                    $keys[] = trim(trim($key, '\''), '\"');
+                    if($key[0] == '\'' || $key[0] == '\"' ) { // teste si c'est une chaine
+                        $keys[] = trim(trim($key, '\''), '\"');
+                    }
                     break;
                 }
                 else {
