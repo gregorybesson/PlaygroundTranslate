@@ -164,11 +164,12 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $arbo = array();
         foreach (glob($path.'*') as $folder) {
-            foreach (glob($folder.'/*') as $file) {
-                $content = json_decode(file_get_contents($file), true);
-                $arbo[$content['controller']][$content['action']] = $content;
+            if(is_dir($folder)) {
+                foreach (glob($folder.'/*') as $file) {
+                    $content = json_decode(file_get_contents($file), true);
+                    $arbo[$content['controller']][$content['action']] = $content;
+                }
             }
-            
         }
         return $arbo;
     }
@@ -228,6 +229,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $path = __DIR__.$pathTranslate.'categories/';
         if(!file_exists($path)) {
             mkdir($path, true);
+            chmod($path, 0777);
         }
         $data = array(
             'keys' => array_unique($keys), // On enleve les doublons
