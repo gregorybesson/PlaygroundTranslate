@@ -374,7 +374,9 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 $design = implode('/', $config['design']['frontend']);
             }
 
-            $explodeController = explode('\\', $this->_reverseAlias(str_replace(['Controller', 'controller'], "", $controller)));
+            $controllerName = str_replace(['Controller', 'controller'], "", $controller);
+            $reverseAlias = $this->_reverseAlias($controllerName);
+            $explodeController = explode('\\', $reverseAlias);
             $template = __DIR__.'/../../../../../../design/' . $package . '/' . $design .'/'. $this->_getFileName(current($explodeController)) . '/' . $this->_getFileName(end($explodeController)) . '/' . $this->_getFileName($action) . '.phtml';
         } else {
             $template = "";
