@@ -101,7 +101,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $translate = "";
         foreach ($content as $key => $value) {
-            $translate .= '    "'.$key.'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
+            $translate .= '    "'.str_replace('"', '\"', $key).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
         
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
@@ -210,11 +210,16 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $split = str_split($value);
             $in = false;
             $key = '';
+            $cpt = 0;
+            $firstOpenTag = false;
             foreach ($split as $car) {
-                if(($car == '\'' || $car == '\"') && !$in) {
+                if(!$firstOpenTag) {
+                    $firstOpenTag = $car;
+                }
+                if(($car == $firstOpenTag) && !$in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
                     $in = true;
                 }
-                elseif(($car == '\'' || $car == '\"') && $in) {
+                elseif(($car == $firstOpenTag) && $in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
                     $in = false;
                 }
 
@@ -222,9 +227,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                     $key .= $car;
                 }
                 else {
-                    $res[] = ltrim(ltrim($key, '\''), '\"');
+                    $word = ltrim(ltrim($key, '\''), '"');
+                    $res[] = str_replace(array('\\\'', '\\"'), array('\'', '"'), $word);
                     break;
                 }
+                $cpt++;
             }
         }
 
