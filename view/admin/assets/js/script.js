@@ -30,7 +30,6 @@ $(function() {
                 $(this).contents().each(function(i, e){
                     if($(this)[0].nodeType == 8) {
                         var nodeValue = e.nodeValue;
-                        console.log('"' + e.nodeValue + '"', '" traduction-key:' + key + ' "', nodeValue == ' traduction-key:' + key + ' ');
                         if(nodeValue == ' traduction-key:' + key + ' ') {
                             oldValueInput.val(value);
                             $(this).parent().html($(this).parent().html().replace('<!-- traduction-key:' + key + ' --> ' + oldValue + ' <!-- /traduction-key -->', '<!-- traduction-key:' + key + ' --> ' + value + ' <!-- /traduction-key -->'));
@@ -45,7 +44,6 @@ $(function() {
         $(window).on('scroll', function() {
             var top = $(window).scrollTop();
             var container = $('#container-iframe');
-            console.log(container.offset().top, top);
             if(container.offset().top < top) {
                 container.children()
                     .css('width', container.width())
