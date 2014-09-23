@@ -28,7 +28,7 @@ class Translate extends ZendTranslate
      * @throws Exception\RuntimeException
      * @return string
      */
-    public function __invoke($message, $textDomain = null, $locale = null)
+    public function __invoke($message, $textDomain = null, $locale = null, $decoration = false)
     {
     	//$this->cacheTranslate($message);
 
@@ -39,8 +39,12 @@ class Translate extends ZendTranslate
         if (null === $textDomain) {
             $textDomain = $this->getTranslatorTextDomain();
         }
-
-        return '<!-- traduction-key:'.$message.' --> '.$translator->translate($message, $textDomain, $locale).' <!-- /traduction-key -->';
+        if(!$decoration) {
+            return $translator->translate($message, $textDomain, $locale);
+        }
+        else {
+            return '<!-- traduction-key:'.$message.' --> '.$translator->translate($message, $textDomain, $locale).' <!-- /traduction-key -->';
+        }
     }
 
 }

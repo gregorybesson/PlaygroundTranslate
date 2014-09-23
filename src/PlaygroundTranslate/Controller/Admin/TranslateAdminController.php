@@ -163,6 +163,14 @@ class TranslateAdminController extends AbstractActionController implements Servi
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
+            if($this->getRequest()->getQuery('controller')) {
+                $redirect = '?controller=' . $this->getRequest()->getQuery('controller')
+                    . '&action=' . $this->getRequest()->getQuery('action')
+                    . '&locale=' . $this->getRequest()->getQuery('locale');
+            } else {
+                $redirect = '';
+            }
+
              $data = array_merge(
                     $request->getPost()->toArray(),
                     $request->getFiles()->toArray()
@@ -173,7 +181,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
                 if($return === false){
                     $this->flashMessenger()->addMessage('The translate has not been updated');
 
-                    return $this->redirect()->toRoute('admin/playgroundtranslate');
+                    return $this->redirect()->toUrl($this->url()->fromRoute('admin/playgroundtranslate') . $redirect);
                 }
 
                 $return = $this->getTranslateService()->activeTranslate($locale);
@@ -181,16 +189,16 @@ class TranslateAdminController extends AbstractActionController implements Servi
                 if($return === false){
                     $this->flashMessenger()->addMessage('The translate has not been updated');
 
-                    return $this->redirect()->toRoute('admin/playgroundtranslate');
+                    return $this->redirect()->toUrl($this->url()->fromRoute('admin/playgroundtranslate') . $redirect);
                 }
                 $this->flashMessenger()->addMessage('The translate has been updated');
             }
             sleep(2);
 
-            return $this->redirect()->toRoute('admin/playgroundtranslate');
+            return $this->redirect()->toUrl($this->url()->fromRoute('admin/playgroundtranslate') . $redirect);
         }
 
-        return $this->redirect()->toRoute('admin/playgroundtranslate');
+        return $this->redirect()->toUrl($this->url()->fromRoute('admin/playgroundtranslate') . $redirect);
     }
 
     /**

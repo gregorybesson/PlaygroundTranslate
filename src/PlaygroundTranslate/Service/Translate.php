@@ -101,7 +101,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $translate = "";
         foreach ($content as $key => $value) {
-            $translate .= '    "'.$key.'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
+            $translate .= '    "'.str_replace('"', '\"', $key).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
         
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
@@ -176,6 +176,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
     public function parseTemplate($template)
     {
+        // on recupere toutes les informations dans le ->translate()
         $raw = file_get_contents($template);
         $tabs = preg_split('#\$this->translate\(#i', $raw);
         $keys = array();
@@ -193,7 +194,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
                 if($cpt==0) {
                     if($key[0] == '\'' || $key[0] == '\"' ) { // teste si c'est une chaine
-                        $keys[] = trim(trim($key, '\''), '\"');
+                        $keys[] = $key;
                     }
                     break;
                 }
@@ -202,16 +203,106 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 }
             }
         }
-        return $keys;
+
+        // traitement pour recupere juste la clé
+        $res = array();
+        foreach ($keys as $value) {
+            $split = str_split($value);
+            $in = false;
+            $key = '';
+            $cpt = 0;
+            $firstOpenTag = false;
+            foreach ($split as $car) {
+                if(!$firstOpenTag) {
+                    $firstOpenTag = $car;
+                }
+                if(($car == $firstOpenTag) && !$in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
+                    $in = true;
+                }
+                elseif(($car == $firstOpenTag) && $in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
+                    $in = false;
+                }
+
+                if($in) {
+                    $key .= $car;
+                }
+                else {
+                    $word = ltrim(ltrim($key, '\''), '"');
+                    $res[] = str_replace(array('\\\'', '\\"'), array('\'', '"'), $word);
+                    break;
+                }
+                $cpt++;
+            }
+        }
+
+        return $res;
+    }
+
+    public function parseForPartials($template)
+    {
+        // on recupere toutes les informations dans le ->translate()
+        $raw = file_get_contents($template);
+        $tabs = preg_split('#\$this->partial\(#i', $raw);
+        $keys = array();
+        foreach ($tabs as $key => $value) {
+            $split = str_split($value);
+            $cpt = 1;
+            $key = '';
+            foreach ($split as $car) {
+                if($car == '(') {
+                    $cpt ++;
+                }
+                elseif($car == ')') {
+                    $cpt --;
+                }
+
+                if($cpt==0) {
+                    if($key[0] == '\'' || $key[0] == '\"' ) { // teste si c'est une chaine
+                        $keys[] = /*trim(trim(*/$key/*, '\''), '\"')*/;
+                    }
+                    break;
+                }
+                else {
+                    $key .= $car;
+                }
+            }
+        }
+
+        // traitement pour recupere juste la clé
+        $res = array();
+        foreach ($keys as $value) {
+            $split = str_split($value);
+            $in = false;
+            $key = '';
+            foreach ($split as $car) {
+                if(($car == '\'' || $car == '\"') && !$in) {
+                    $in = true;
+                }
+                elseif(($car == '\'' || $car == '\"') && $in) {
+                    $in = false;
+                }
+
+                if($in) {
+                    $key .= $car;
+                }
+                else {
+                    $res[] = ltrim(ltrim($key, '\''), '\"');
+                    break;
+                }
+            }
+        }
+
+        return $res;
     }
 
     public function buildTree()
     {
         // layout
-        $this->parseLayout($this->getServiceManager()->get('Config')['core_layout']['frontend']['layout']);
+        $config = $this->getServiceManager()->get('Config');
+        $this->parseLayout($config['core_layout']['frontend']['layout']);
 
         // templates
-        $routes = $this->getServiceManager()->get('Config')['router']['routes'];
+        $routes = $config['router']['routes'];
         foreach ($routes as $key => $route) {
             $this->buildTreeRecursive(1, $key, $route, "");
         }
@@ -221,7 +312,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
 
-        $design = implode('/', $this->getServiceManager()->get('Config')['design']['frontend']);
+        $config = $this->getServiceManager()->get('Config');
+        $design = implode('/', $config['design']['frontend']);
 
         $template = __DIR__.'/../../../../../../design/frontend/' . $design .'/'.$layout;
 
@@ -282,13 +374,16 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             if(empty($package)) {
                 $package = "frontend";
             }
-            if(!empty($package) && array_key_exists($package, $this->getServiceManager()->get('Config')['design'])) {
-                $design = implode('/', $this->getServiceManager()->get('Config')['design'][$package]);
+            $config = $this->getServiceManager()->get('Config');
+            if(!empty($package) && array_key_exists($package, $config['design'])) {
+                $design = implode('/', $config['design'][$package]);
             } else {
-                $design = implode('/', $this->getServiceManager()->get('Config')['design']['frontend']);
+                $design = implode('/', $config['design']['frontend']);
             }
 
-            $explodeController = explode('\\', $this->_reverseAlias(str_replace(['Controller', 'controller'], "", $controller)));
+            $controllerName = str_replace(array('Controller', 'controller'), "", $controller);
+            $reverseAlias = $this->_reverseAlias($controllerName);
+            $explodeController = explode('\\', $reverseAlias);
             $template = __DIR__.'/../../../../../../design/' . $package . '/' . $design .'/'. $this->_getFileName(current($explodeController)) . '/' . $this->_getFileName(end($explodeController)) . '/' . $this->_getFileName($action) . '.phtml';
         } else {
             $template = "";
@@ -298,6 +393,14 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             
             // Parsing du template
             $keys = $this->parseTemplate($template);
+
+            $partials = $this->parseForPartials($template);
+            foreach ($partials as $partial) {
+                $partialFile = $template = __DIR__.'/../../../../../../design/' . $package . '/' . $design .'/'.$partial;
+                if(file_exists($partialFile)) {
+                    $keys = array_merge($keys, $this->parseTemplate($partialFile));
+                }
+            }
 
             $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
             $pathTranslate = $options->getLanguagePath();
@@ -329,7 +432,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         Retourne le nom du controller a partir de son alias
     */
     protected function _reverseAlias($alias) {
-        $aliases = $this->getServiceManager()->get('Config')['controllers']['invokables'];
+        $config = $this->getServiceManager()->get('Config');
+        $aliases = $config['controllers']['invokables'];
         if(array_key_exists($alias, $aliases)) {
             return $aliases[$alias];
         }
