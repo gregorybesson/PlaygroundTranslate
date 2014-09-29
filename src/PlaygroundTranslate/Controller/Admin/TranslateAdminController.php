@@ -175,6 +175,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
                     $request->getPost()->toArray(),
                     $request->getFiles()->toArray()
             ); 
+   
             foreach ($data['translate'] as $locale => $values) {
                 $return  = $this->getTranslateService()->writeFile($locale, $values);
 
