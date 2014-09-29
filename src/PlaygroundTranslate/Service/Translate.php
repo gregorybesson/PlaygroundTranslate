@@ -102,8 +102,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $translate = "";
         foreach ($content as $key => $value) {
-            if(is_numeric($key) && empty($value)) {continue;}
-
             $translate .= '    "'.str_replace('"', '\"',stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
         
