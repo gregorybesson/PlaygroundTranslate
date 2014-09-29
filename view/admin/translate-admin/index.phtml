@@ -199,8 +199,8 @@
                                         <td> <?php echo htmlentities($key); ?></td>
                                         <?php foreach (array_keys($translates) as $locale) : ?>
                                             <td>
-                                                <textarea class="form-control" rows="3" name="translate[<?php echo $locale ?>][<?php echo $key ?>]"><?php echo !empty($translates[$locale][$key])?$translates[$locale][$key]:''; ?></textarea>  
-                                                <input type="hidden" value="<?php echo !empty($translates[$locale][$key])?$translates[$locale][$key]:$key; ?>"/>
+                                                <textarea class="form-control" rows="3" name="translate[<?php echo $locale ?>][<?php echo htmlentities(addslashes($key)) ?>]"><?php echo !empty($translates[$locale][$key])?$translates[$locale][$key]:''; ?></textarea>  
+                                                <input type="hidden" value="<?php echo !empty($translates[$locale][$key])?htmlentities(addslashes($translates[$locale][$key])):$key; ?>"/>
                                             </td>
                                         <?php endforeach; ?>
                                     </tr>
