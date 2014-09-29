@@ -102,7 +102,9 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $translate = "";
         foreach ($content as $key => $value) {
-            $translate .= '    "'.addslashes(stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
+            if(is_numeric($key) && empty($value)) {continue;}
+
+            $translate .= '    "'.str_replace('"', '\"',stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
         
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
