@@ -96,9 +96,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
         $data = include(__DIR__.$pathTranslate.$locale.'.php');
+        
         // On ajoute les nouvelles
-        $content = array_merge($data, $content);
-
+        // $content = array_merge($data, $content); will not work if numeric key exists !
+        // beware of the order below (to overwrite)
+        $content += $data;
 
         $translate = "";
         foreach ($content as $key => $value) {
