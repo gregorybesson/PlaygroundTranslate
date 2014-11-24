@@ -4,10 +4,10 @@ $(function() {
         $('#arbo-select').on('change',function()
         {
             if($(this[this.selectedIndex]).attr('data-controller') == "") {
-                window.location.href = window.location.origin + '/admin/translate'
+                window.location.href = '/admin/translate'
                     + '?locale=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-lang'));
             } else {
-                window.location.href = window.location.origin + '/admin/translate'
+                window.location.href = '/admin/translate'
                     + '?controller=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-controller')) 
                     + '&action=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-action'))
                     + '&locale=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-lang')) ;
@@ -15,7 +15,7 @@ $(function() {
         });
         $('#lang-select').on('change',function()
         {
-            window.location.href = window.location.origin + '/admin/translate'
+            window.location.href = '/admin/translate'
                 + '?controller=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-controller')) 
                 + '&action=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-action'))
                 + '&locale=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-lang')) ;
