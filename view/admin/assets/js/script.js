@@ -3,11 +3,15 @@ $(function() {
         
         $('#arbo-select').on('change',function()
         {
+            if (!window.location.origin) {
+                window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+            }
+
             if($(this[this.selectedIndex]).attr('data-controller') == "") {
-                window.location.href = '/admin/translate'
+                window.location.href = window.location.origin + window.location.pathname
                     + '?locale=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-lang'));
             } else {
-                window.location.href = '/admin/translate'
+                window.location.href = window.location.origin + window.location.pathname
                     + '?controller=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-controller')) 
                     + '&action=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-action'))
                     + '&locale=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-lang')) ;
@@ -15,7 +19,10 @@ $(function() {
         });
         $('#lang-select').on('change',function()
         {
-            window.location.href = '/admin/translate'
+            if (!window.location.origin) {
+                window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+            }
+            window.location.href = window.location.origin + window.location.pathname
                 + '?controller=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-controller')) 
                 + '&action=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-action'))
                 + '&locale=' + encodeURIComponent($(this[this.selectedIndex]).attr('data-lang')) ;
