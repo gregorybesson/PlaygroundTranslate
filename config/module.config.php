@@ -98,11 +98,15 @@ return array(
     ),
     'navigation' => array(
         'admin' => array(
-            'translate'  => array(
-                'label' => 'Translate',
-                'route' => 'admin/playgroundtranslate',
-                'resource' => 'translate',
-                'privilege' => 'list',  
+            'playgroundconfigurationadmin'  => array(
+                'pages' => array(
+                    'translation' => array(
+                        'label' => 'Translate',
+                        'route' => 'admin/playgroundtranslate',
+                        'resource' => 'translate',
+                        'privilege' => 'list', 
+                    ),
+                ),
             ),
         ),
     ),

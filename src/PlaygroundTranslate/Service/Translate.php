@@ -357,8 +357,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 break;
         }
         if(array_key_exists('defaults', $route['options'])) {
-            $controller = $route['options']['defaults']['controller'];
-            $action = $route['options']['defaults']['action'];
+            $controller = isset($route['options']['defaults']['controller'])?$route['options']['defaults']['controller']:false;
+            $action = isset($route['options']['defaults']['action'])?$route['options']['defaults']['action']:false;
         } else {
             $controller = false;
             $action = false;
