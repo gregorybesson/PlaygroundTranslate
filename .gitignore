@@ -1,7 +1,8 @@
-/.project
+.project
+.buildpath
+.settings
+/build
+/tests/data/*
 /vendor
 /composer.lock
-.settings
 composer.phar
-/.buildpath
-/build
