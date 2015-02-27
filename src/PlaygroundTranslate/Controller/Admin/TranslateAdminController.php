@@ -65,7 +65,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
                     $request->getPost()->toArray(),
                     $request->getFiles()->toArray()
             );  
-
+        
             if(!empty($data['export'])){
                 $return  = $this->getTranslateService()->export($data);
                 return $this->exportTranslate($return, $data);
@@ -81,7 +81,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
                     return $this->exportTranslateExcel($return, $data); 
                 }
             }
-
+        
             
             if(! $return){
                 $this->flashMessenger()->addMessage('The translate has not been updated');
@@ -90,7 +90,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
             }
             sleep(2);
             return $this->redirect()->toRoute('admin/playgroundtranslate');
-          }
+        }
 
         $viewModel = new ViewModel();
 
@@ -122,7 +122,8 @@ class TranslateAdminController extends AbstractActionController implements Servi
             }
             // On ajoute les clées de traductions vides trouvées par le parsing
             foreach ($locales as $key => $locale) {
-                $translates[$locale->getLocale()] = array_merge($allKeysInKey, $translates[$locale->getLocale()]);
+                if(isset($translates[$locale->getLocale()]))
+                    $translates[$locale->getLocale()] = array_merge($allKeysInKey, $translates[$locale->getLocale()]);
             }
         }
 

@@ -96,9 +96,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
         $data = include(__DIR__.$pathTranslate.$locale.'.php');
+        
         // On ajoute les nouvelles
-        $content = array_merge($data, $content);
-
+        // $content = array_merge($data, $content); will not work if numeric key exists !
+        // beware of the order below (to overwrite)
+        $content += $data;
 
         $translate = "";
         foreach ($content as $key => $value) {
@@ -355,8 +357,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 break;
         }
         if(array_key_exists('defaults', $route['options'])) {
-            $controller = $route['options']['defaults']['controller'];
-            $action = $route['options']['defaults']['action'];
+            $controller = isset($route['options']['defaults']['controller'])?$route['options']['defaults']['controller']:false;
+            $action = isset($route['options']['defaults']['action'])?$route['options']['defaults']['action']:false;
         } else {
             $controller = false;
             $action = false;
