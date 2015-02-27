@@ -10,5 +10,4 @@
 return array(
     'import translate' => 'Import a new version of translations',
     'locale' => 'Langage',
-    'translations' => 'translations'
 );
