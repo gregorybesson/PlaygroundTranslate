@@ -98,11 +98,16 @@ foo;bar
 return array(
     'import translate' => 'Import a new version of translations',
     'locale' => 'Langage',
+    'translations' => 'translations'
 );
 ";
         $ret = file_put_contents($pathTranslate.$filename, $content);
      
         $result = $service->activeTranslate('en_US');
+
+        foreach (glob($pathTranslate."revisions/en_US.php.*") as $filename) {
+           unlink($filename);
+        }
 
         $this->assertEquals($result, true);
     }
