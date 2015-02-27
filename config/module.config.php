@@ -101,7 +101,7 @@ return array(
             'playgroundconfigurationadmin'  => array(
                 'pages' => array(
                     'translation' => array(
-                        'label' => 'Translate',
+                        'label' => 'Translations',
                         'route' => 'admin/playgroundtranslate',
                         'resource' => 'translate',
                         'privilege' => 'list', 
