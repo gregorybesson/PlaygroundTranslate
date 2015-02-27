@@ -105,6 +105,10 @@ return array(
      
         $result = $service->activeTranslate('en_US');
 
+        foreach (glob($pathTranslate."revisions/en_US.php.*") as $filename) {
+           unlink($filename);
+        }
+
         $this->assertEquals($result, true);
     }
 
