@@ -28,6 +28,9 @@ class TranslateAdminController extends AbstractActionController implements Servi
     */
     protected $localeService;
 
+    public static $EMPTY_VALUE = "itsanemptytranslation";
+
+
 
     /**
     * indexAction : Permet de recuperer les traductions et de les mettre a jour
@@ -248,7 +251,8 @@ class TranslateAdminController extends AbstractActionController implements Servi
         foreach ($arborescence as $controller => $branch) {
             foreach ($branch as $action => $datas) {
                 foreach ($datas['keys'] as $key) {
-                    $keys[$key] = $controllerName = end(explode('\\', $controller)).'-'.$action;
+                    $ends = explode('\\', $controller);
+                    $keys[$key] = $controllerName = end($ends).'-'.$action;
                 }
             }
         }
@@ -271,7 +275,14 @@ class TranslateAdminController extends AbstractActionController implements Servi
             <body><table>';
 
             foreach ($translates as $key => $value) {
-                $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td><td>".htmlspecialchars($keys[$key])."</td></tr>";
+                $controller = "";
+                if(!empty($keys[$key])) {
+                    $controller = htmlspecialchars($keys[$key]); 
+                }
+                if ( $value == " ") {
+                    $value = self::$EMPTY_VALUE;
+                }
+                $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td><td>".$controller."</td></tr>";
             }
 
         $content.="</table></body>";
