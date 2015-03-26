@@ -18,6 +18,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
      */
     protected $serviceManager;
 
+    public static $EMPTY_VALUE = "' '";
+
     /**
     * upload : permet d'upload un CSV et de le retranscrire en un fichier de traduction sous ZF
     * @param array $data file upload form
@@ -104,6 +106,9 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $translate = "";
         foreach ($content as $key => $value) {
+            if ( $value == self::$EMPTY_VALUE) {
+                $value = " ";
+            }
             $translate .= '    "'.str_replace('"', '\"',stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
         
