@@ -28,7 +28,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     */
     protected $localeService;
 
-    public static $EMPTY_VALUE = "itsanemptytranslation";
+    public static $EMPTY_VALUE = "' '";
 
 
 

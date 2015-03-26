@@ -18,7 +18,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
      */
     protected $serviceManager;
 
-    public static $EMPTY_VALUE = "itsanemptytranslation";
+    public static $EMPTY_VALUE = "' '";
 
     /**
     * upload : permet d'upload un CSV et de le retranscrire en un fichier de traduction sous ZF
