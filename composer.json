@@ -20,10 +20,6 @@
     "require": {
         "php": ">=5.3.3",
         "zendframework/zendframework" : "2.*",
-        "hounddog/doctrine-data-fixture-module": "0.*",
-        "zendframework/zend-developer-tools" : "dev-master",
-        "jhuet/zdt-logger-module" : "0.*",
-        "bjyoungblood/bjy-authorize" : "1.1.*",
         "playground/core" : "2.*",
         "playground/design" : "2.*"
     },
