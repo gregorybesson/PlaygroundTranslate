@@ -97,7 +97,13 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         // On recupère toutes les traductions
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
-        $data = include(__DIR__.$pathTranslate.$locale.'.php');
+
+        if(file_exists(__DIR__.$pathTranslate.$locale.'.php')) {
+            $data = include(__DIR__.$pathTranslate.$locale.'.php');
+        } else {
+            $data = array();
+        }
+
         
         // On ajoute les nouvelles
         // $content = array_merge($data, $content); will not work if numeric key exists !
@@ -160,7 +166,6 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 $translates[basename(__DIR__.$pathTranslate.$file, '.php')] = @include __DIR__.$pathTranslate.$file;
             }
         }
-
 
         return $translates;
     }
