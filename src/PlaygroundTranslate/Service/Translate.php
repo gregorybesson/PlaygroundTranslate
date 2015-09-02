@@ -98,19 +98,21 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
         $data = include(__DIR__.$pathTranslate.$locale.'.php');
-        
-        // On ajoute les nouvelles
-        // $content = array_merge($data, $content); will not work if numeric key exists !
-        // beware of the order below (to overwrite)
-        $content += $data;
 
-        $translate = "";
         foreach ($content as $key => $value) {
+            $data[$key] = $value;
+        }
+
+        
+        $translate = "";
+
+        foreach ($data as $key => $value) {
             if ( $value == self::$EMPTY_VALUE) {
                 $value = " ";
             }
             $translate .= '    "'.str_replace('"', '\"',stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
         }
+
         
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
@@ -119,6 +121,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $contentTranslate = str_replace("{{translate}}", $translate, $template);
 
         return file_put_contents(__DIR__.$pathTranslate.$locale.'.php.tmp', $contentTranslate);
+
     }
 
     /**
