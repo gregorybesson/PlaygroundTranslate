@@ -103,15 +103,13 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         } else {
             $data = array();
         }
-
-        
-        // On ajoute les nouvelles
-        // $content = array_merge($data, $content); will not work if numeric key exists !
-        // beware of the order below (to overwrite)
-        $content += $data;
-
-        $translate = "";
+       
         foreach ($content as $key => $value) {
+            $data[$key] = $value;
+        }
+        
+        $translate = "";
+        foreach ($data as $key => $value) {
             if ( $value == self::$EMPTY_VALUE) {
                 $value = " ";
             }
