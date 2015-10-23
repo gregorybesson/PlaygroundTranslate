@@ -18,8 +18,11 @@ return array(
     
         'guards' => array(
             'BjyAuthorize\Guard\Controller' => array(
+                //console
+                array('controller' => 'playgroundtranslate_console', 'roles' => array('guest', 'user')),
+
                 // Admin area
-                array('controller' => 'PlaygroundTranslate\Controller\Admin\TranslateAdmin',    'roles' => array('admin')),
+                array('controller' => 'PlaygroundTranslate\Controller\Admin\TranslateAdmin', 'roles' => array('admin')),
             ),
         ),
     ),
@@ -84,6 +87,22 @@ return array(
         ),
     ),
 
+    'console' => array(
+        'router' => array(
+            'routes' => array(
+                'cron' => array(
+                    'options' => array(
+                        'route' => 'translate:create <path>',
+                        'defaults' => array(
+                            'controller' => 'playgroundtranslate_console',
+                            'action' => 'create-translation-files'
+                        ),
+                    ),
+                ),
+            )
+        )
+    ),
+
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -92,6 +111,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
+            'playgroundtranslate_console'              => 'PlaygroundTranslate\Controller\ConsoleController',
             'PlaygroundTranslate\Controller\Admin\TranslateAdmin'  => 'PlaygroundTranslate\Controller\Admin\TranslateAdminController',
             'PlaygroundTranslate\Controller\Api\Translate'  => 'PlaygroundTranslate\Controller\Api\TranslateController',
         ),

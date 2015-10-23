@@ -556,6 +556,73 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $historicals;
     }
 
+    /**
+    * getHistory : Permet de recuperer les historiques de traductions
+    * @param array $historicals tableau de d'historique de traductions
+    * @param string $key clé de locale 
+    * 
+    * @return array $historicals tableau de d'historique de traductions
+    */
+    public function createTranslationFiles($folder, $key)
+    {
+        //$d=__DIR__ . '/../../../../../../../design/frontend/default/base/custom/quick-burger';
+
+        // Parse the phtml files and find translation phrases. I put them in an array for dedoubloning phrases
+        $files = $this->filesFrom($folder, 'phtml');
+
+        $transArray = array();
+        foreach($files as $path=>$file){
+            $raw = file_get_contents($path);
+            // If filter only words (surrounded by ' or " and don't take var 
+            preg_match_all('/\$this->translate\([\"\'](.*?)[\"\']\)/', $raw, $matches);
+            foreach($matches[1] as $k=>$phrase){
+                $transArray[$phrase]['phrase'] = $phrase;
+                $transArray[$phrase]['files'][$file['name']] = (isset($transArray[$phrase]['files'][$file['name']]))? $transArray[$phrase]['files'][$file['name']]+1:1;
+            }
+        }
+
+        // I create the translation file array and write it to all languages files
+        $translation = "<?php\n  return array(\n";
+        foreach($transArray as $k=>$v){
+            // add the name of the template containing this phrase
+            // foreach($v['files'] as $filename => $count){
+            //     $translation .= "    // $filename ($count times)\n"; 
+            // }
+            
+            $translation .= '    "'.str_replace('"', '\"',stripslashes($v['phrase'])).'" => "'.str_replace('"', '\"', $v['phrase']).'",'."\n"; 
+        }
+        $translation .= ");\n";
+
+        $lfiles = $this->filesFrom($folder.'/language', 'php');
+        $result = "";
+        foreach($lfiles as $path=>$file){
+            file_put_contents ( $path , $translation);
+            $result .= $file['name'] . " updated\n";
+        }
+
+        return $result;
+        
+    }
+
+    /**
+    * filesFrom : parse subdirectories and return files of a certain type
+    * @param string $folder full path of the folder
+    * @param string $extension file type to search
+    *
+    * @return array $fileList List of files with the right extension
+    */
+    public function filesFrom($folder, $extension) {
+
+        $all_files  = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($folder));
+        $files = new \RegexIterator($all_files, '/\.'.$extension.'$/');
+        $fileList = array();
+        foreach($files as $file) {
+            $fileList[$file->getPathName()]['path'] = $file->getPathName();
+            $fileList[$file->getPathName()]['name'] = $file->getFileName();
+        }
+        return $fileList;
+    }
+
 
     /**
      * Retrieve service manager instance

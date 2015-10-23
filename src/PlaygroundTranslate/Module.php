@@ -69,10 +69,6 @@ class Module
                     
                     return $form;
                 },
-
-                
-
-               
             ),
             'invokables' => array(
                 'playgroundtranslate_translate_service' => 'PlaygroundTranslate\Service\Translate',
@@ -94,5 +90,16 @@ class Module
             )
         );
 
+    }
+
+    public function getConsoleUsage(\Zend\Console\Adapter\Posix $console)
+    {
+        return array(
+            // Describe available commands
+            'translate:create <path>'  => 'Create the translation files by looking for "$this->translate()" phrases in the phtml included in path',
+ 
+            // Describe expected parameters
+            array( 'path', 'The full directory path to search for phtml files' ),
+        );
     }
 }
