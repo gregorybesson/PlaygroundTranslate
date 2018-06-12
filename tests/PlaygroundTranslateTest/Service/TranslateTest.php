@@ -3,7 +3,6 @@ namespace PlaygroundTranslateTest\Service;
 
 use PlaygroundTranslateTest\Bootstrap;
 
-
 class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     protected $traceError = true;
@@ -106,7 +105,7 @@ return array(
         $result = $service->activeTranslate('en_US');
 
         foreach (glob($pathTranslate."revisions/en_US.php.*") as $filename) {
-           unlink($filename);
+            unlink($filename);
         }
 
         $this->assertEquals($result, true);
@@ -132,4 +131,4 @@ return array(
 
         $this->assertEquals(count($result) > 0, true);
     }
-}   
+}

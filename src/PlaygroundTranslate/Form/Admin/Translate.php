@@ -18,7 +18,7 @@ class Translate extends ProvidesEventsForm
     * __construct : permet de construire le formulaire qui peuplera l'entity theme
     *
     * @param string $name
-    * @param Zend\ServiceManager\ServiceManager $serviceManager 
+    * @param Zend\ServiceManager\ServiceManager $serviceManager
     * @param Zend\I18n\Translator\Translator $translator
     *
     */
@@ -27,7 +27,7 @@ class Translate extends ProvidesEventsForm
         $this->serviceManager = $serviceManager;
         parent::__construct($name);
 
-        $this->setAttribute('enctype','multipart/form-data');
+        $this->setAttribute('enctype', 'multipart/form-data');
 
         $this->add(array(
             'name' => 'id',
@@ -55,32 +55,32 @@ class Translate extends ProvidesEventsForm
             'options' => array(
                 'label' => $translator->translate('import translate', 'playgroundtranslate'),
             ),
-        ));
+         ));
 
 
-        $this->add(array(
+         $this->add(array(
             'name' => 'translate',
             'type'  => 'Zend\Form\Element\Hidden',
             'attributes' => array(
                     'value' => '',
             ),
-        ));
+         ));
 
-       $this->add(array(
+         $this->add(array(
             'type' => 'Zend\Form\Element\Select',
             'name' => 'locale',
             'options' => array(
                 'label' => $translator->translate('locale', 'playgroundtranslate'),
                 'value_options' => $this->getLocales(),
             )
-        ));
+         ));
 
 
 
-        $submitElement = new Element\Button('submit');
-        $submitElement->setAttributes(array('type'  => 'submit'));
+         $submitElement = new Element\Button('submit');
+         $submitElement->setAttributes(array('type'  => 'submit'));
 
-        $this->add($submitElement, array('priority' => -100));
+         $this->add($submitElement, array('priority' => -100));
     }
 
     /**
@@ -90,7 +90,7 @@ class Translate extends ProvidesEventsForm
     *
     */
     public function getLocales()
-    {   
+    {
         $locales = $this->serviceManager->get('playgroundcore_locale_service')->getLocaleMapper()->findAll();
         $localesForm = array();
         foreach ($locales as $key => $locale) {

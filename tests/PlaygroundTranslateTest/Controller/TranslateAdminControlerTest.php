@@ -33,17 +33,17 @@ class TranslateAdminControllerTest extends AbstractHttpControllerTestCase
         $translates = array("Impress" => "Mentions légales");
         $content = $ts->convertArrayToCSV($translates);
         $this->assertEquals('Impress;Mentions légales
-',$content);
+', $content);
 
          $translates = array("Impress" => "Odtlačok");
         $content = $ts->convertArrayToCSV($translates);
         $this->assertEquals('Impress;Odtlačok
-',$content);
+', $content);
 
          $translates = array("Impress" => "版本說明 Bǎnběn shuōmíng");
         $content = $ts->convertArrayToCSV($translates);
         $this->assertEquals('Impress;版本說明 Bǎnběn shuōmíng
-',$content);
+', $content);
 
     }
 }

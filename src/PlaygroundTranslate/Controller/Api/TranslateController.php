@@ -31,7 +31,7 @@ class TranslateController extends AbstractActionController implements ServiceLoc
 
     /**
     * Permet de récuperer la liste des traductions
-    *  
+    *
     * key : clé de traduction à chercher
     * locale : locale de traduction
     *
@@ -43,9 +43,9 @@ class TranslateController extends AbstractActionController implements ServiceLoc
     {
         $response = $this->getResponse();
         $response->setStatusCode(200);
-        $headers = $response->getHeaders(); 
-        $headers->addHeaderLine('Cache-Control', 'public, max-age=86400'); 
-        $headers->addHeaderLine('Expires', date(DATE_RFC822, strtotime("1 day"))); 
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Cache-Control', 'public, max-age=86400');
+        $headers->addHeaderLine('Expires', date(DATE_RFC822, strtotime("1 day")));
 
 
         $key = strtolower($this->getEvent()->getRouteMatch()->getParam('key'));
@@ -87,7 +87,7 @@ class TranslateController extends AbstractActionController implements ServiceLoc
     */
     public function getTranslateService()
     {
-        if($this->translateService === null){
+        if ($this->translateService === null) {
             $this->translateService = $this->getServiceLocator()->get('playgroundtranslate_translate_service');
         }
         return $this->translateService;
@@ -106,7 +106,7 @@ class TranslateController extends AbstractActionController implements ServiceLoc
     /**
     * setServiceLocator : set le service locator
     */
-    public function setServiceLocator (ServiceLocatorInterface $serviceLocator)
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
     }

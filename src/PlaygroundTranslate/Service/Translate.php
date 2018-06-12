@@ -23,18 +23,18 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /**
     * upload : permet d'upload un CSV et de le retranscrire en un fichier de traduction sous ZF
     * @param array $data file upload form
-    * 
+    *
     * @return boolean $return status de la fonction
     */
     public function upload(array $data)
     {
         $content = $this->readCSV($data);
-        if($content === false){
+        if ($content === false) {
             return false;
         }
 
         $return = $this->writeFile($data['locale'], $content, 'csv');
-        if($return === false){
+        if ($return === false) {
             return false;
         }
 
@@ -46,11 +46,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     {
         $objPHPExcel = \PHPExcel_IOFactory::load($data['uploadTranslateExcel']['tmp_name']);
         $content = array();
-        for ($i=1; $i <= $objPHPExcel->getActiveSheet()->getHighestRow(); $i++) { 
+        for ($i=1; $i <= $objPHPExcel->getActiveSheet()->getHighestRow(); $i++) {
             $content[$objPHPExcel->getActiveSheet()->getCell('A'.$i)->getValue()] = $objPHPExcel->getActiveSheet()->getCell('B'.$i)->getValue();
         }
         $return = $this->writeFile($data['locale'], $content, 'excel');
-        if($return === false){
+        if ($return === false) {
             return false;
         }
 
@@ -60,24 +60,24 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /**
     * readCSV : Lire un fichier CSV et le formater dans un tableau php
     * @param array $data file upload form
-    * 
+    *
     * @return array $content array de traductions
     */
-    public function readCSV($data) 
+    public function readCSV($data)
     {
         $content = array();
-        if ( !file_exists($data['uploadTranslate']['tmp_name'])) {
+        if (!file_exists($data['uploadTranslate']['tmp_name'])) {
             return false;
         }
-        if (($handle = fopen($data['uploadTranslate']['tmp_name'], "r")) === FALSE){
+        if (($handle = fopen($data['uploadTranslate']['tmp_name'], "r")) === false) {
             return false;
         }
     
-        while (($cols = fgetcsv($handle, 0, "\t")) !== FALSE) {
+        while (($cols = fgetcsv($handle, 0, "\t")) !== false) {
             foreach ($cols as $row) {
                 $rowTab = explode(";", $row);
-                if(!empty($rowTab[0]) && !empty($rowTab[1])) {
-                    $content[$rowTab[0]] = $rowTab[1];  
+                if (!empty($rowTab[0]) && !empty($rowTab[1])) {
+                    $content[$rowTab[0]] = $rowTab[1];
                 }
             }
         }
@@ -86,10 +86,10 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     }
 
     /**
-    * writeFile : Ecrire un fichier temporaire php de traduction 
+    * writeFile : Ecrire un fichier temporaire php de traduction
     * @param string $locale locale
     * @param array $content array de traductions
-    * 
+    *
     * @return mixed $mixed retour du file_put_contents pour le fichier temporaire
     */
     public function writeFile($locale, $content, $context = null)
@@ -98,7 +98,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
 
-        if(file_exists(__DIR__.$pathTranslate.$locale.'.php')) {
+        if (file_exists(__DIR__.$pathTranslate.$locale.'.php')) {
             $data = include(__DIR__.$pathTranslate.$locale.'.php');
         } else {
             $data = array();
@@ -110,10 +110,10 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         
         $translate = "";
         foreach ($data as $key => $value) {
-            if ( $value == self::$EMPTY_VALUE) {
+            if ($value == self::$EMPTY_VALUE) {
                 $value = " ";
             }
-            $translate .= '    "'.str_replace('"', '\"',stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n"; 
+            $translate .= '    "'.str_replace('"', '\"', stripslashes($key)).'" => "'.str_replace('"', '\"', $value).'",'."\n";
         }
         
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
@@ -128,7 +128,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /**
     * activeTranslate : Renommage du fichier temporaire pour l'activer sous ZF
     * @param string $locale locale
-    * 
+    *
     * @return boolean $return retour du rename
     */
     public function activeTranslate($locale)
@@ -137,7 +137,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $pathTranslate = $options->getLanguagePath();
 
         $oldFile = __DIR__.$pathTranslate.$locale.'.php';
-        if(file_exists($oldFile)){
+        if (file_exists($oldFile)) {
             rename($oldFile, __DIR__.$pathTranslate.'/revisions/'.$locale.'.php.'.date("YmdHis"));
         }
 
@@ -148,7 +148,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
     /**
     * readLanguagesFiles : Permet de lire les fichiers de traductions
-    * 
+    *
     * @return array $translates tableau de traductions
     */
     public function readLanguagesFiles()
@@ -159,8 +159,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $pathTranslate = $options->getLanguagePath();
 
         $dir = opendir(__DIR__.$pathTranslate);
-        while($file = readdir($dir)) { 
-            if($file != '.' && $file != '..' && !is_dir(__DIR__.$pathTranslate.$file)) {
+        while ($file = readdir($dir)) {
+            if ($file != '.' && $file != '..' && !is_dir(__DIR__.$pathTranslate.$file)) {
                 $translates[basename(__DIR__.$pathTranslate.$file, '.php')] = @include __DIR__.$pathTranslate.$file;
             }
         }
@@ -168,14 +168,15 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         return $translates;
     }
 
-    public function getArborescence() {
+    public function getArborescence()
+    {
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
         $path = __DIR__.$pathTranslate.'categories/';
 
         $arbo = array();
         foreach (glob($path.'*') as $folder) {
-            if(is_dir($folder)) {
+            if (is_dir($folder)) {
                 foreach (glob($folder.'/*') as $file) {
                     $content = json_decode(file_get_contents($file), true);
                     $arbo[$content['controller']][$content['action']] = $content;
@@ -196,20 +197,18 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $cpt = 1;
             $key = '';
             foreach ($split as $car) {
-                if($car == '(') {
+                if ($car == '(') {
                     $cpt ++;
-                }
-                elseif($car == ')') {
+                } elseif ($car == ')') {
                     $cpt --;
                 }
 
-                if($cpt==0) {
-                    if($key[0] == '\'' || $key[0] == '\"' ) { // teste si c'est une chaine
+                if ($cpt==0) {
+                    if ($key[0] == '\'' || $key[0] == '\"') { // teste si c'est une chaine
                         $keys[] = $key;
                     }
                     break;
-                }
-                else {
+                } else {
                     $key .= $car;
                 }
             }
@@ -224,20 +223,18 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $cpt = 0;
             $firstOpenTag = false;
             foreach ($split as $car) {
-                if(!$firstOpenTag) {
+                if (!$firstOpenTag) {
                     $firstOpenTag = $car;
                 }
-                if(($car == $firstOpenTag) && !$in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
+                if (($car == $firstOpenTag) && !$in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
                     $in = true;
-                }
-                elseif(($car == $firstOpenTag) && $in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
+                } elseif (($car == $firstOpenTag) && $in && (!array_key_exists($cpt - 1, $split) || (array_key_exists($cpt - 1, $split) && $split[$cpt - 1] != "\\"))) {
                     $in = false;
                 }
 
-                if($in) {
+                if ($in) {
                     $key .= $car;
-                }
-                else {
+                } else {
                     $word = ltrim(ltrim($key, '\''), '"');
                     $res[] = str_replace(array('\\\'', '\\"'), array('\'', '"'), $word);
                     break;
@@ -260,20 +257,18 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $cpt = 1;
             $key = '';
             foreach ($split as $car) {
-                if($car == '(') {
+                if ($car == '(') {
                     $cpt ++;
-                }
-                elseif($car == ')') {
+                } elseif ($car == ')') {
                     $cpt --;
                 }
 
-                if($cpt==0) {
-                    if($key[0] == '\'' || $key[0] == '\"' ) { // teste si c'est une chaine
+                if ($cpt==0) {
+                    if ($key[0] == '\'' || $key[0] == '\"') { // teste si c'est une chaine
                         $keys[] = /*trim(trim(*/$key/*, '\''), '\"')*/;
                     }
                     break;
-                }
-                else {
+                } else {
                     $key .= $car;
                 }
             }
@@ -286,17 +281,15 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $in = false;
             $key = '';
             foreach ($split as $car) {
-                if(($car == '\'' || $car == '\"') && !$in) {
+                if (($car == '\'' || $car == '\"') && !$in) {
                     $in = true;
-                }
-                elseif(($car == '\'' || $car == '\"') && $in) {
+                } elseif (($car == '\'' || $car == '\"') && $in) {
                     $in = false;
                 }
 
-                if($in) {
+                if ($in) {
                     $key .= $car;
-                }
-                else {
+                } else {
                     $res[] = ltrim(ltrim($key, '\''), '\"');
                     break;
                 }
@@ -319,7 +312,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         }
     }
 
-    public function parseLayout($layout) {
+    public function parseLayout($layout)
+    {
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
 
@@ -330,7 +324,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         $keys = $this->parseTemplate($template);
         $path = __DIR__.$pathTranslate.'categories/';
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             mkdir($path, true);
             chmod($path, 0777);
         }
@@ -364,7 +358,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
                 
                 break;
         }
-        if(array_key_exists('defaults', $route['options'])) {
+        if (array_key_exists('defaults', $route['options'])) {
             $controller = isset($route['options']['defaults']['controller'])?$route['options']['defaults']['controller']:false;
             $action = isset($route['options']['defaults']['action'])?$route['options']['defaults']['action']:false;
         } else {
@@ -379,14 +373,14 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         }
 
 
-        if($controller) {
+        if ($controller) {
             // Gestion du package
             $package = current(array_filter(explode('/', $url)));
-            if(empty($package)) {
+            if (empty($package)) {
                 $package = "frontend";
             }
             $config = $this->getServiceManager()->get('Config');
-            if(!empty($package) && array_key_exists($package, $config['design'])) {
+            if (!empty($package) && array_key_exists($package, $config['design'])) {
                 $design = implode('/', $config['design'][$package]);
             } else {
                 $design = implode('/', $config['design']['frontend']);
@@ -400,15 +394,14 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $template = "";
         }
 
-        if(file_exists($template)) {
-            
+        if (file_exists($template)) {
             // Parsing du template
             $keys = $this->parseTemplate($template);
 
             $partials = $this->parseForPartials($template);
             foreach ($partials as $partial) {
                 $partialFile = $template = __DIR__.'/../../../../../../design/' . $package . '/' . $design .'/'.$partial;
-                if(file_exists($partialFile)) {
+                if (file_exists($partialFile)) {
                     $keys = array_merge($keys, $this->parseTemplate($partialFile));
                 }
             }
@@ -417,7 +410,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             $pathTranslate = $options->getLanguagePath();
 
             $path = __DIR__.$pathTranslate.'categories/'.str_replace("\\", "", $controller);
-            if(!file_exists($path)) {
+            if (!file_exists($path)) {
                 mkdir($path, true);
             }
             $data = array(
@@ -432,7 +425,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         }
 
-        if(is_array($route) && array_key_exists('child_routes', $route)) {
+        if (is_array($route) && array_key_exists('child_routes', $route)) {
             foreach ($route['child_routes'] as $childKey => $childRoute) {
                 $this->buildTreeRecursive($row + 1, $childKey, $childRoute, $url."/".$key);
             }
@@ -442,10 +435,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /*
         Retourne le nom du controller a partir de son alias
     */
-    protected function _reverseAlias($alias) {
+    protected function _reverseAlias($alias)
+    {
         $config = $this->getServiceManager()->get('Config');
         $aliases = $config['controllers']['invokables'];
-        if(array_key_exists($alias, $aliases)) {
+        if (array_key_exists($alias, $aliases)) {
             return $aliases[$alias];
         }
         return $alias;
@@ -454,11 +448,12 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /*
         factory pour passe de "JeSuisUnBG" à "je-suis-un-bg"
     */
-    protected function _getFileName($file) {
+    protected function _getFileName($file)
+    {
         $return = "";
         $last = true; // Gestion des majuscules qui se suivent (on ne met pas de '-') et de la premiere majuscule
-        foreach(str_split($file) as $car) {
-            if(!$last && ord($car) >= 65 && ord($car) <= 90) {
+        foreach (str_split($file) as $car) {
+            if (!$last && ord($car) >= 65 && ord($car) <= 90) {
                 $return .= "-" . strtolower($car);
                 $last = true;
             } else {
@@ -467,11 +462,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
             }
         }
         return $return;
-    } 
+    }
 
     /**
     * readLanguageFile : Permet de lire un fichier de traductions en fonction de la locale
-    * @param string $locale : locale 
+    * @param string $locale : locale
     *
     * @return array $translates tableau de traductions
     */
@@ -517,7 +512,7 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /**
     * convertArrayToCSV : convertit un tableau en CSV
     * @param array $translates tableau de traduction
-    * 
+    *
     * @return string $content contenu des traduction au format csv
     */
     public function convertArrayToCSV($translates)
@@ -534,8 +529,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /**
     * getHistory : Permet de recuperer les historiques de traductions
     * @param array $historicals tableau de d'historique de traductions
-    * @param string $key clé de locale 
-    * 
+    * @param string $key clé de locale
+    *
     * @return array $historicals tableau de d'historique de traductions
     */
     public function getHistory($historicals, $key)
@@ -543,8 +538,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $options = $this->getServiceManager()->get('playgroundtranslate_module_options');
         $pathTranslate = $options->getLanguagePath();
         $dir = opendir(__DIR__.$pathTranslate.'revisions/');
-        while($file = readdir($dir)) { 
-            if($file != '.' && $file != '..' && !is_dir(__DIR__.$pathTranslate.$file) && strpos($file, $key) !== false) {
+        while ($file = readdir($dir)) {
+            if ($file != '.' && $file != '..' && !is_dir(__DIR__.$pathTranslate.$file) && strpos($file, $key) !== false) {
                 $filename = explode(".", $file);
                 $datetime = $filename[2];
                 $datetime = \DateTime::createFromFormat('YmdHis', $datetime);
@@ -559,8 +554,8 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     /**
     * getHistory : Permet de recuperer les historiques de traductions
     * @param array $historicals tableau de d'historique de traductions
-    * @param string $key clé de locale 
-    * 
+    * @param string $key clé de locale
+    *
     * @return array $historicals tableau de d'historique de traductions
     */
     public function createTranslationFiles($folder, $key)
@@ -571,11 +566,11 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
         $files = $this->filesFrom($folder, 'phtml');
 
         $transArray = array();
-        foreach($files as $path=>$file){
+        foreach ($files as $path => $file) {
             $raw = file_get_contents($path);
-            // If filter only words (surrounded by ' or " and don't take var 
+            // If filter only words (surrounded by ' or " and don't take var
             preg_match_all('/\$this->translate\([\"\'](.*?)[\"\']\)/', $raw, $matches);
-            foreach($matches[1] as $k=>$phrase){
+            foreach ($matches[1] as $k => $phrase) {
                 $transArray[$phrase]['phrase'] = $phrase;
                 $transArray[$phrase]['files'][$file['name']] = (isset($transArray[$phrase]['files'][$file['name']]))? $transArray[$phrase]['files'][$file['name']]+1:1;
             }
@@ -583,20 +578,20 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
 
         // I create the translation file array and write it to all languages files
         $translation = "<?php\n  return array(\n";
-        foreach($transArray as $k=>$v){
+        foreach ($transArray as $k => $v) {
             // add the name of the template containing this phrase
             // foreach($v['files'] as $filename => $count){
-            //     $translation .= "    // $filename ($count times)\n"; 
+            //     $translation .= "    // $filename ($count times)\n";
             // }
             
-            $translation .= '    "'.str_replace('"', '\"',stripslashes($v['phrase'])).'" => "'.str_replace('"', '\"', $v['phrase']).'",'."\n"; 
+            $translation .= '    "'.str_replace('"', '\"', stripslashes($v['phrase'])).'" => "'.str_replace('"', '\"', $v['phrase']).'",'."\n";
         }
         $translation .= ");\n";
 
         $lfiles = $this->filesFrom($folder.'/language', 'php');
         $result = "";
-        foreach($lfiles as $path=>$file){
-            file_put_contents ( $path , $translation);
+        foreach ($lfiles as $path => $file) {
+            file_put_contents($path, $translation);
             $result .= $file['name'] . " updated\n";
         }
 
@@ -611,12 +606,13 @@ class Translate extends EventProvider implements ServiceManagerAwareInterface
     *
     * @return array $fileList List of files with the right extension
     */
-    public function filesFrom($folder, $extension) {
+    public function filesFrom($folder, $extension)
+    {
 
         $all_files  = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($folder));
         $files = new \RegexIterator($all_files, '/\.'.$extension.'$/');
         $fileList = array();
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $fileList[$file->getPathName()]['path'] = $file->getPathName();
             $fileList[$file->getPathName()]['name'] = $file->getFileName();
         }

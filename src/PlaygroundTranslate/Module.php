@@ -28,10 +28,10 @@ class Module
         
             // plugins
             $translate = $serviceManager->get('viewhelpermanager')->get('translate');
-            $translate->getTranslator()->setLocale($locale);  
+            $translate->getTranslator()->setLocale($locale);
         }
         
-        AbstractValidator::setDefaultTranslator($translator,'playgroundtranslate');
+        AbstractValidator::setDefaultTranslator($translator, 'playgroundtranslate');
     }
 
     public function getConfig()
@@ -57,13 +57,13 @@ class Module
                 'playgroundtranslate_doctrine_em' => 'doctrine.entitymanager.orm_default',
             ),
             'factories' => array(
-                'playgroundtranslate_module_options' => function  ($sm) {
+                'playgroundtranslate_module_options' => function ($sm) {
                     $config = $sm->get('Configuration');
                     
                     return new Options\ModuleOptions(isset($config['playgroundtranslate']) ? $config['playgroundtranslate'] : array());
                 },
                 
-                'playgroundtranslate_translate_form' => function  ($sm) {
+                'playgroundtranslate_translate_form' => function ($sm) {
                     $translator = $sm->get('translator');
                     $form = new Form\Admin\Translate(null, $sm, $translator);
                     

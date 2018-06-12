@@ -65,30 +65,30 @@ class TranslateAdminController extends AbstractActionController implements Servi
      
         if ($request->isPost()) {
             $data = array_merge(
-                    $request->getPost()->toArray(),
-                    $request->getFiles()->toArray()
-            );  
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
         
-            if(!empty($data['export'])){
+            if (!empty($data['export'])) {
                 $return  = $this->getTranslateService()->export($data);
                 return $this->exportTranslate($return, $data);
-            }else{
-                if(!empty($data['uploadTranslateExcel']) && $data['uploadTranslateExcel']['name'] != ''){
-                    $return  = $this->getTranslateService()->uploadExcel($data);   
+            } else {
+                if (!empty($data['uploadTranslateExcel']) && $data['uploadTranslateExcel']['name'] != '') {
+                    $return  = $this->getTranslateService()->uploadExcel($data);
                 }
-                if(!empty($data['uploadTranslate']) && $data['uploadTranslate']['name'] != ''){
-                    $return  = $this->getTranslateService()->upload($data);     
+                if (!empty($data['uploadTranslate']) && $data['uploadTranslate']['name'] != '') {
+                    $return  = $this->getTranslateService()->upload($data);
                 }
-                if(!empty($data['exportexcel'])){
-                    $return  = $this->getTranslateService()->export($data);    
-                    return $this->exportTranslateExcel($return, $data); 
+                if (!empty($data['exportexcel'])) {
+                    $return  = $this->getTranslateService()->export($data);
+                    return $this->exportTranslateExcel($return, $data);
                 }
             }
         
             
-            if(! $return){
+            if (! $return) {
                 $this->flashMessenger()->addMessage('The translate has not been updated');
-            }else{
+            } else {
                 $this->flashMessenger()->addMessage('The translate has been updated');
             }
             sleep(2);
@@ -102,14 +102,13 @@ class TranslateAdminController extends AbstractActionController implements Servi
         $arborescence = $this->getTranslateService()->getArborescence();
 
         // Gestion de la branche
-        if($this->getRequest()->getQuery('controller')) {
+        if ($this->getRequest()->getQuery('controller')) {
             $branch = $arborescence[
                     $this->getRequest()->getQuery('controller', key($arborescence))
                 ][
                     $this->getRequest()->getQuery('action', key(current($arborescence)))
                 ];
-        }
-        else {
+        } else {
             $branch = false;
 
             // On recupere toutes les clées du parsing
@@ -125,8 +124,9 @@ class TranslateAdminController extends AbstractActionController implements Servi
             }
             // On ajoute les clées de traductions vides trouvées par le parsing
             foreach ($locales as $key => $locale) {
-                if(isset($translates[$locale->getLocale()]))
+                if (isset($translates[$locale->getLocale()])) {
                     $translates[$locale->getLocale()] = array_merge($allKeysInKey, $translates[$locale->getLocale()]);
+                }
             }
         }
 
@@ -137,16 +137,16 @@ class TranslateAdminController extends AbstractActionController implements Servi
 
         $keys = array();
         foreach ($translates as $translate) {
-            if(is_array($translate)){
+            if (is_array($translate)) {
                 foreach (array_keys($translate) as $value) {
-                    if(empty($keys[$value])) {
+                    if (empty($keys[$value])) {
                         $keys[$value] = $value;
                     }
                 }
             }
         }
 
-        return $viewModel->setVariables(array('form' => $form, 
+        return $viewModel->setVariables(array('form' => $form,
                                               'locales' => $locales,
                                               'user' => $user,
                                               'translates' => $translates,
@@ -167,7 +167,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-            if($this->getRequest()->getQuery('controller')) {
+            if ($this->getRequest()->getQuery('controller')) {
                 $redirect = '?controller=' . $this->getRequest()->getQuery('controller')
                     . '&action=' . $this->getRequest()->getQuery('action')
                     . '&locale=' . $this->getRequest()->getQuery('locale');
@@ -176,14 +176,14 @@ class TranslateAdminController extends AbstractActionController implements Servi
             }
 
              $data = array_merge(
-                    $request->getPost()->toArray(),
-                    $request->getFiles()->toArray()
-            ); 
+                 $request->getPost()->toArray(),
+                 $request->getFiles()->toArray()
+             );
    
             foreach ($data['translate'] as $locale => $values) {
                 $return  = $this->getTranslateService()->writeFile($locale, $values);
 
-                if($return === false){
+                if ($return === false) {
                     $this->flashMessenger()->addMessage('The translate has not been updated');
 
                     return $this->redirect()->toUrl($this->url()->fromRoute('admin/playgroundtranslate') . $redirect);
@@ -191,7 +191,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
 
                 $return = $this->getTranslateService()->activeTranslate($locale);
 
-                if($return === false){
+                if ($return === false) {
                     $this->flashMessenger()->addMessage('The translate has not been updated');
 
                     return $this->redirect()->toUrl($this->url()->fromRoute('admin/playgroundtranslate') . $redirect);
@@ -274,16 +274,16 @@ class TranslateAdminController extends AbstractActionController implements Servi
             </head>
             <body><table>';
 
-            foreach ($translates as $key => $value) {
-                $controller = "";
-                if(!empty($keys[$key])) {
-                    $controller = htmlspecialchars($keys[$key]); 
-                }
-                if ( $value == " ") {
-                    $value = self::$EMPTY_VALUE;
-                }
-                $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td><td>".$controller."</td></tr>";
+        foreach ($translates as $key => $value) {
+            $controller = "";
+            if (!empty($keys[$key])) {
+                $controller = htmlspecialchars($keys[$key]);
             }
+            if ($value == " ") {
+                $value = self::$EMPTY_VALUE;
+            }
+            $content .="<tr><td>".htmlspecialchars($key)."</td><td>".htmlspecialchars($value)."</td><td>".$controller."</td></tr>";
+        }
 
         $content.="</table></body>";
         $response->setContent($content);
@@ -297,7 +297,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     */
     public function getLocaleService()
     {
-        if($this->localeService === null){
+        if ($this->localeService === null) {
             $this->localeService = $this->getServiceLocator()->get('playgroundcore_locale_service');
         }
         return $this->localeService;
@@ -310,7 +310,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     */
     public function getTranslateService()
     {
-        if($this->translateService === null){
+        if ($this->translateService === null) {
             $this->translateService = $this->getServiceLocator()->get('playgroundtranslate_translate_service');
         }
         return $this->translateService;
@@ -323,7 +323,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     */
     public function getTranslateForm()
     {
-        if($this->translateForm === null){
+        if ($this->translateForm === null) {
             $this->translateForm = $this->getServiceLocator()->get('playgroundtranslate_translate_form');
         }
         return $this->translateForm;
@@ -341,7 +341,7 @@ class TranslateAdminController extends AbstractActionController implements Servi
     /**
     * setServiceLocator : set le service locator
     */
-    public function setServiceLocator (ServiceLocatorInterface $serviceLocator)
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
     }
